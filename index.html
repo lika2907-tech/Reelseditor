@@ -21,7 +21,9 @@ window.ENGINE = {
   nextPrice:     197,  // the price after the founding window
   demoVideo:     '',   // demo mp4 or a YouTube/Vimeo embed URL
   demoLength:    '',   // e.g. '4:12'
-  applyUrl:      ''    // application link for the Authentic AI Content System
+  applyUrl:      '',   // application link for the Authentic AI Content System
+  // Real client words only. Add up to three: { quote: '...', name: '...', role: '...' }
+  testimonials: []
 };
 document.documentElement.classList.add('js');
 </script>
@@ -126,10 +128,6 @@ body:after{content:"";position:fixed;inset:-50%;z-index:90;pointer-events:none;o
 .hero .meta p{font-size:15px;line-height:1.65;color:var(--cream);margin:16px 0 26px;text-shadow:0 1px 18px rgba(31,6,10,.25)}
 .hero .tags{position:absolute;z-index:3;top:clamp(84px,11vh,110px);left:var(--gut);right:var(--gut);display:flex;justify-content:space-between}
 .hero .phone{position:absolute;z-index:3;right:var(--gut);bottom:clamp(28px,6vh,64px);width:clamp(120px,12vw,180px)}
-.badge{position:absolute;z-index:4;width:118px;height:118px;left:-62px;top:-58px}
-.badge svg{width:100%;height:100%;animation:spin 16s linear infinite}
-.badge:after{content:"";position:absolute;left:50%;top:50%;width:10px;height:10px;margin:-5px;border-radius:50%;background:var(--crimson)}
-@keyframes spin{to{transform:rotate(360deg)}}
 .scrolly{position:absolute;z-index:3;left:50%;bottom:22px;width:1px;height:56px;background:rgba(248,248,247,.3);overflow:hidden}
 .scrolly:after{content:"";position:absolute;left:0;top:-50%;width:1px;height:50%;background:var(--cream);animation:drip 2s var(--ease) infinite}
 @keyframes drip{to{top:100%}}
@@ -141,7 +139,6 @@ body:after{content:"";position:fixed;inset:-50%;z-index:90;pointer-events:none;o
   .hero .meta{position:relative;left:auto;bottom:auto;max-width:none;padding:0 var(--gut) 56px;margin-top:-26vw}
   .hero .phone,.hero .tags span:last-child{display:none}
   .hero .tags{top:84px}
-  .badge{width:92px;height:92px;left:-40px;top:-44px}
   .scrolly{display:none}
 }
 
@@ -154,8 +151,7 @@ body:after{content:"";position:fixed;inset:-50%;z-index:90;pointer-events:none;o
 .marq{background:var(--burgundy);color:var(--cream);padding:clamp(22px,3vw,40px) 0;overflow:hidden;white-space:nowrap}
 .marq .row{display:inline-flex;will-change:transform}
 .marq span{font:400 italic clamp(44px,7vw,112px)/1 var(--serif);padding-right:.5em;display:inline-flex;align-items:center;gap:.5em}
-.marq span:after{content:"✦";font-style:normal;font-size:.32em;color:var(--taupe)}
-.marq .o{font-style:normal;color:transparent;-webkit-text-stroke:1px rgba(248,248,247,.7)}
+.marq span:after{content:"";width:.14em;height:.14em;border-radius:50%;background:var(--taupe);opacity:.7}
 
 /* section basics */
 .sec{position:relative;padding:clamp(96px,14vw,200px) var(--gut)}
@@ -194,10 +190,24 @@ body:after{content:"";position:fixed;inset:-50%;z-index:90;pointer-events:none;o
 .proc li p{font-size:13px;color:var(--brown);margin-top:8px}
 .proc .bar{height:1px;background:rgba(28,11,14,.15);margin-top:24px;position:relative}
 .proc .bar i{position:absolute;left:0;top:0;bottom:0;width:100%;background:var(--crimson);transform-origin:left;transform:scaleX(0)}
-.film{margin-top:60px;display:none}
-.film.on{display:block}
-.film .fr{position:relative;aspect-ratio:16/9;background:#000;border-radius:6px;overflow:hidden}
-.film iframe,.film video{position:absolute;inset:0;width:100%;height:100%;border:0}
+.demo-head{display:grid;gap:28px;margin-bottom:clamp(40px,5vw,72px)}
+@media (min-width:1000px){.demo-head{grid-template-columns:1.3fr .7fr;align-items:end}}
+.demo .h2{font-size:clamp(42px,5.4vw,92px);text-wrap:balance}
+.demo .len{display:block;margin-top:10px;color:var(--cream);letter-spacing:.2em;font-size:11px}
+.demo .frame{position:relative;aspect-ratio:16/9;max-width:100%;background:#000;border-radius:6px;overflow:hidden}
+.demo .frame iframe,.demo .frame video{position:absolute;inset:0;width:100%;height:100%;border:0}
+.ph-demo{position:absolute;inset:0}
+.ph-demo img{width:100%;height:100%;object-fit:cover;object-position:50% 35%;filter:brightness(.45) saturate(.8)}
+.ph-in{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center}
+.ph-in b{font:400 italic clamp(28px,3.4vw,52px)/1 var(--serif)}
+.ph-in small{font:500 10.5px/1 var(--sans);letter-spacing:.3em;text-transform:uppercase;color:var(--taupe)}
+.play{width:clamp(64px,7vw,96px);height:clamp(64px,7vw,96px);border-radius:50%;border:1px solid rgba(248,248,247,.6);position:relative;margin-bottom:14px}
+.play:after{content:"";position:absolute;left:54%;top:50%;transform:translate(-50%,-50%);border-left:16px solid var(--cream);border-top:10px solid transparent;border-bottom:10px solid transparent}
+.chap{list-style:none;display:grid;gap:1px;margin-top:28px;background:rgba(248,248,247,.14);border-top:1px solid rgba(248,248,247,.14)}
+@media (min-width:800px){.chap{grid-template-columns:repeat(4,1fr)}}
+.chap li{background:var(--night);padding:20px 20px 20px 0;font-size:13px;color:var(--taupe);counter-increment:c}
+@media (min-width:800px){.chap li{padding:22px 24px}.chap li:first-child{padding-left:0}}
+.chap li b{display:block;font:400 italic 22px/1.2 var(--serif);color:var(--cream);margin-bottom:6px}
 
 /* statement */
 .stmt{background:var(--burgundy);color:var(--cream)}
@@ -229,6 +239,19 @@ body:after{content:"";position:fixed;inset:-50%;z-index:90;pointer-events:none;o
 .hz .end .btn{align-self:flex-start}
 .hz .end p{font:400 clamp(28px,2.8vw,42px)/1.08 var(--serif)}
 @media (max-width:899px){.hz .track{overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}.hz .track::-webkit-scrollbar{display:none}.hz .card,.hz .end{scroll-snap-align:start}.hz .card{width:62vw}}
+
+/* testimonials */
+.vgrid{display:grid;gap:1px;margin-top:clamp(48px,6vw,90px);background:rgba(28,11,14,.14);border:1px solid rgba(28,11,14,.14)}
+@media (min-width:900px){.vgrid{grid-template-columns:repeat(3,1fr)}}
+.vcard{background:var(--cream);padding:clamp(28px,3.4vw,48px);display:flex;flex-direction:column;gap:26px;min-width:0}
+.vcard q{font:400 clamp(21px,1.9vw,27px)/1.35 var(--serif);quotes:"\201C" "\201D"}
+.vcard q:before{color:var(--crimson)}
+.vcard .who{margin-top:auto;display:flex;align-items:center;gap:14px;border-top:1px solid rgba(28,11,14,.12);padding-top:18px}
+.vcard .who i{flex:0 0 42px;height:42px;border-radius:50%;background:var(--burgundy);color:var(--cream);display:grid;place-items:center;font:400 italic 18px/1 var(--serif)}
+.vcard .who b{display:block;font-size:14px;font-weight:600}
+.vcard .who small{font-size:12px;color:var(--brown)}
+.vcard.draft q{color:var(--brown);font-style:italic}
+.vcard.draft .tag{align-self:flex-start;font:600 9px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;color:var(--crimson);border:1px dashed var(--crimson);padding:7px 9px;border-radius:99px}
 
 /* compare */
 .cmp{background:var(--offwhite)}
@@ -272,6 +295,10 @@ body:after{content:"";position:fixed;inset:-50%;z-index:90;pointer-events:none;o
 .eco .node .k{font:600 8.5px var(--sans);letter-spacing:.24em;fill:var(--brown);font-style:normal}
 .eco .node.on text{fill:var(--cream)}
 .eco .node.on .k{fill:var(--taupe)}
+.eco-steps{list-style:none;margin-top:30px;border-top:1px solid rgba(28,11,14,.14);max-width:560px}
+.eco-steps li{display:grid;grid-template-columns:150px 1fr;gap:18px;padding:16px 0;border-bottom:1px solid rgba(28,11,14,.14);font-size:14px;color:var(--brown)}
+.eco-steps li b{font:400 italic 20px/1.3 var(--serif);color:var(--burgundy)}
+@media (max-width:560px){.eco-steps li{grid-template-columns:1fr;gap:4px}}
 .eco a.u{display:inline-flex;gap:12px;align-items:center;margin-top:34px;font:600 10.5px/1 var(--sans);letter-spacing:.26em;text-transform:uppercase;color:var(--burgundy);border-bottom:1px solid;padding-bottom:8px}
 
 /* founder */
@@ -375,7 +402,7 @@ footer .legal{margin-top:24px;font-size:11px;opacity:.6;padding-bottom:70px}
 <header class="nav" id="nav">
   <a class="logo" href="#top" aria-label="She Who Scales, back to top"><img src="assets/logo.png" alt=""><b>SHE WHO SCALES</b></a>
   <div class="mid"><i></i><span>Founding release · <span data-price>$111</span><span data-show="deadline"> · ends <span data-dl-label></span></span></span></div>
-  <a class="btn sm" href="#pricing" data-checkout data-mag><span class="t"><span data-t="Get the engine">Get the engine</span></span><span class="dot"></span></a>
+  <a class="btn sm" href="#pricing" data-checkout data-mag><span class="t"><span data-t="Be everywhere">Be everywhere</span></span><span class="dot"></span></a>
 </header>
 
 <main>
@@ -389,24 +416,23 @@ footer .legal{margin-top:24px;font-size:11px;opacity:.6;padding-bottom:70px}
   <div class="ph" data-speed="-.08"><img src="assets/hero.jpg" alt="Malika in a black blazer dress, seated on a white studio cube"></div>
   <div class="meta">
     <span class="kicker">For founders who refuse AI slop</span>
-    <p>Hand it your raw footage. Get back a reel in your signature look, at the standard of your best work, without the hours or the back and forth.</p>
-    <a class="btn cream" href="#pricing" data-checkout data-mag><span class="t"><span data-t="Start my engine · $111">Start my engine · $111</span></span><span class="dot"></span></a>
+    <p>Hand it your raw footage. Get back a finished reel in your signature look, published from your Mac to Instagram and Facebook, at the standard of your best work and without the back and forth.</p>
+    <a class="btn cream" href="#pricing" data-checkout data-mag><span class="t"><span data-t="Be everywhere · $111">Be everywhere · $111</span></span><span class="dot"></span></a>
   </div>
   <a class="phone" href="#process" data-cursor="Watch" aria-label="See a raw clip become a reel">
-    <div class="badge" aria-hidden="true"><svg viewBox="0 0 120 120"><defs><path id="c" d="M60,60 m-46,0 a46,46 0 1,1 92,0 a46,46 0 1,1 -92,0"/></defs><text font-family="Montserrat" font-size="9.4" font-weight="600" letter-spacing="3.3" fill="#f8f8f7"><textPath href="#c">RAW TO READY ✦ IN YOUR LOOK ✦ </textPath></text></svg></div>
     <div class="scr"><video src="assets/reels/a-editorial.mp4" poster="assets/reels/a-editorial.jpg" muted loop playsinline autoplay preload="metadata"></video></div>
   </a>
   <div class="scrolly" aria-hidden="true"></div>
 </section>
 
 <!-- MARQUEE -->
-<div class="marq" aria-hidden="true"><div class="row" id="marq"><span>Raw</span><span class="o">Refined</span><span>Ready</span><span class="o">In your look</span><span>Never slop</span><span class="o">Your final yes</span><span>Raw</span><span class="o">Refined</span><span>Ready</span><span class="o">In your look</span><span>Never slop</span><span class="o">Your final yes</span></div></div>
+<div class="marq" aria-hidden="true"><div class="row" id="marq"><span>Record in flow</span><span>Be everywhere</span><span>Edit nothing</span><span>Your brand, at scale</span><span>Without being the cost of it</span><span>Record in flow</span><span>Be everywhere</span><span>Edit nothing</span><span>Your brand, at scale</span><span>Without being the cost of it</span></div></div>
 
 <!-- PAIN -->
 <section class="sec pain" aria-labelledby="pain-h">
   <div class="head">
     <div>
-      <div class="idx">01 · The real problem</div>
+      <div class="idx">The real problem</div>
       <h2 class="h2" id="pain-h"><span class="ln"><span>You built</span></span><span class="ln"><span>the business.</span></span><span class="ln"><span class="it cr">So why are you</span></span><span class="ln"><span class="it cr">still the editor?</span></span></h2>
     </div>
     <p class="lede">Your ideas are not the bottleneck. Your hours are. And every hour you spend in a timeline is an hour the most expensive person in your company is doing the cheapest job in it.</p>
@@ -423,7 +449,7 @@ footer .legal{margin-top:24px;font-size:11px;opacity:.6;padding-bottom:70px}
 <section class="proc" id="process" aria-labelledby="proc-h">
   <div class="pin" id="procPin">
     <div class="title">
-      <div class="idx">02 · Watch it happen</div>
+      <div class="idx">Watch it happen</div>
       <h2 class="h2" id="proc-h"><span class="ln"><span>Raw in.</span></span><span class="ln"><span class="it cr">Signature out.</span></span></h2>
       <p class="lede" style="margin-top:26px">One phone clip. One sentence of direction. Scroll and watch the same take become a finished reel.</p>
     </div>
@@ -439,34 +465,60 @@ footer .legal{margin-top:24px;font-size:11px;opacity:.6;padding-bottom:70px}
       <ul id="steps">
         <li class="on"><small>01</small><div><b>Cut the dead air</b><p>The ums, the restarts, the silence. Your strongest take stays.</p></div></li>
         <li><small>02</small><div><b>Set the hook</b><p>The first line lands in the first second.</p></div></li>
-        <li><small>03</small><div><b>Caption in your type</b><p>Your fonts, your colors, your pacing.</p></div></li>
-        <li><small>04</small><div><b>Choose the cover</b><p>Your best frame. Then it waits for your yes.</p></div></li>
+        <li><small>03</small><div><b>Style it as yours</b><p>Captions in your fonts and colors, your pacing, your cover frame.</p></div></li>
+        <li><small>04</small><div><b>Publish everywhere</b><p>It drafts the post caption. You approve, and it publishes from your Mac to Instagram and Facebook.</p></div></li>
       </ul>
       <div class="bar"><i id="pbar"></i></div>
     </div>
   </div>
-  <div class="film" id="film" style="padding:0 var(--gut) clamp(80px,10vw,140px)">
-    <div class="idx">The full walkthrough · <span data-demo-length></span></div>
-    <div class="fr" id="filmFrame" data-cursor="Play"></div>
+</section>
+
+<!-- DEMO -->
+<section class="sec demo dark" id="demo" aria-labelledby="demo-h">
+  <div class="demo-head">
+    <div>
+      <div class="idx">The walkthrough</div>
+      <h2 class="h2" id="demo-h"><span class="ln"><span>Watch me set it up.</span></span><span class="ln"><span class="it">Then watch it run.</span></span></h2>
+    </div>
+    <p class="lede">From a fresh install on my Mac to a published reel. Nothing cut, nothing staged.<span class="len" data-demo-length></span></p>
   </div>
+  <div class="frame" id="filmFrame" data-cursor="Play">
+    <div class="ph-demo" id="demoPh">
+      <img src="assets/detail.jpg" alt="">
+      <div class="ph-in"><span class="play" aria-hidden="true"></span><b>The full demo</b><small>Setup to first published reel</small></div>
+    </div>
+  </div>
+  <ol class="chap">
+    <li><b>Setup</b>Install on your Mac and connect your accounts</li>
+    <li><b>Your look</b>Fonts, colors and a reel you love</li>
+    <li><b>First edit</b>One raw clip, one sentence</li>
+    <li><b>Publish</b>Straight to Instagram and Facebook</li>
+  </ol>
 </section>
 
 <!-- STATEMENT -->
-<section class="sec stmt" aria-label="The standard">
-  <div class="idx">03 · The standard</div>
-  <p id="stmt">Most AI makes everyone look the same. This one only knows how to look like <em>you.</em> Your type. Your pacing. Your final yes. Automation should take the hours, <em>never the taste.</em></p>
+<section class="sec stmt" aria-label="What I believe">
+  <div class="idx">What I believe</div>
+  <p id="stmt">AI was given to us to expedite the process, <em>not to kill your authenticity.</em> Let it amplify your voice. But you have to find your voice first. The technology is here to support you, <em>never to replace you.</em></p>
   <div class="rules">
     <div class="rule" data-rv><span class="kicker" style="color:var(--taupe)">Rule one</span><b>Your look, not theirs</b><p>Built on your fonts and colors, or matched to any reel you admire. No preset packs worn by ten thousand accounts.</p></div>
-    <div class="rule" data-rv><span class="kicker" style="color:var(--taupe)">Rule two</span><b>Your yes, every time</b><p>Nothing posts itself. You approve every reel, or say "calmer" and it changes.</p></div>
-    <div class="rule" data-rv><span class="kicker" style="color:var(--taupe)">Rule three</span><b>Your file, every layer</b><p>Take the finished video, or an editable CapCut project your team can refine. Your original is never touched.</p></div>
+    <div class="rule" data-rv><span class="kicker" style="color:var(--taupe)">Rule two</span><b>Your yes, every time</b><p>Nothing goes live without your approval. Say "calmer" and it changes. Say yes and it publishes.</p></div>
+    <div class="rule" data-rv><span class="kicker" style="color:var(--taupe)">Rule three</span><b>Your original, untouched</b><p>Every raw file stays exactly as you shot it, and every finished reel is saved on your Mac.</p></div>
   </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="sec voices" aria-labelledby="voices-h">
+  <div class="idx">In their words</div>
+  <h2 class="h2" id="voices-h"><span class="ln"><span>More posts.</span></span><span class="ln"><span class="it cr">Fewer hours. Same her.</span></span></h2>
+  <div class="vgrid" id="vgrid"></div>
 </section>
 
 <!-- STYLES horizontal -->
 <section class="hz" id="styles" aria-labelledby="hz-h">
   <div class="wrapper" id="hzPin">
     <div class="top">
-      <div><div class="idx">04 · Range</div><h2 class="h2" id="hz-h"><span class="ln"><span>One clip.</span></span><span class="ln"><span class="it cr">Every version of you.</span></span></h2></div>
+      <div><div class="idx">Range</div><h2 class="h2" id="hz-h"><span class="ln"><span>One clip.</span></span><span class="ln"><span class="it cr">Every version of you.</span></span></h2></div>
       <p class="lede">Real reels from my archive. Quiet and editorial, or bold and fast. Each one started as the raw take on the left.</p>
     </div>
     <div class="track" id="track">
@@ -478,25 +530,25 @@ footer .legal{margin-top:24px;font-size:11px;opacity:.6;padding-bottom:70px}
       <div class="card"><div class="phone"><div class="scr"><video src="assets/reels/b-notecard.mp4" poster="assets/reels/b-notecard.jpg" muted loop playsinline preload="none"></video></div></div><div class="cap"><b>Notecard</b><small>04</small></div><p>Script keywords, typed paper cards.</p></div>
       <div class="card"><div class="phone"><div class="scr"><video src="assets/reels/b-podcast.mp4" poster="assets/reels/b-podcast.jpg" muted loop playsinline preload="none"></video></div></div><div class="cap"><b>Podcast</b><small>05</small></div><p>Still frame, hook box, one word at a time.</p></div>
       <div class="card"><div class="phone"><div class="scr"><video src="assets/reels/b-cards.mp4" poster="assets/reels/b-cards.jpg" muted loop playsinline preload="none"></video></div></div><div class="cap"><b>Statement</b><small>06</small></div><p>Big lines and cards that teach.</p></div>
-      <div class="end"><p>Paste a reel you love. <span class="it cr">It studies the style.</span></p><a class="btn" href="#pricing" data-checkout data-mag><span class="t"><span data-t="Make mine">Make mine</span></span><span class="dot"></span></a></div>
+      <div class="end"><p>Paste a reel you love. <span class="it cr">It studies the style.</span></p><a class="btn" href="#pricing" data-checkout data-mag><span class="t"><span data-t="Be everywhere">Be everywhere</span></span><span class="dot"></span></a></div>
     </div>
   </div>
 </section>
 
 <!-- COMPARE -->
 <section class="sec cmp" aria-labelledby="cmp-h">
-  <div class="idx">05 · Your options</div>
+  <div class="idx">Your options</div>
   <h2 class="h2" id="cmp-h"><span class="ln"><span>An editor needs notes.</span></span><span class="ln"><span class="it cr">This needs a sentence.</span></span></h2>
   <div class="grid">
-    <div class="col" data-rv><span class="kicker">Option a</span><h4>A freelance editor</h4><ul><li><span>Your look</span><b>After rounds of notes</b></li><li><span>Turnaround</span><b>Days</b></li><li><span>Changes</span><b>Another email</b></li><li><span>Cost</span><b>$75 to $200 a reel</b></li></ul></div>
-    <div class="col" data-rv><span class="kicker">Option b</span><h4>Generic AI apps</h4><ul><li><span>Your look</span><b>Their templates</b></li><li><span>Turnaround</span><b>Minutes</b></li><li><span>Changes</span><b>Start over</b></li><li><span>Cost</span><b>Monthly, forever</b></li></ul></div>
-    <div class="col us" data-rv><span class="kicker" style="color:var(--taupe)">The engine</span><h4>The Reels Engine</h4><ul><li><span>Your look</span><b>From day one</b></li><li><span>Turnaround</span><b>Minutes, on your computer</b></li><li><span>Changes</span><b>"Make it calmer"</b></li><li><span>Cost</span><b>One payment</b></li></ul></div>
+    <div class="col" data-rv><span class="kicker">Option a</span><h4>A freelance editor</h4><ul><li><span>Your look</span><b>After rounds of notes</b></li><li><span>Turnaround</span><b>Days</b></li><li><span>Changes</span><b>Another email</b></li><li><span>Publishing</span><b>You post it</b></li><li><span>Cost</span><b>$75 to $200 a reel</b></li></ul></div>
+    <div class="col" data-rv><span class="kicker">Option b</span><h4>Generic AI apps</h4><ul><li><span>Your look</span><b>Their templates</b></li><li><span>Turnaround</span><b>Minutes</b></li><li><span>Changes</span><b>Start over</b></li><li><span>Publishing</span><b>Export, then post</b></li><li><span>Cost</span><b>Monthly, forever</b></li></ul></div>
+    <div class="col us" data-rv><span class="kicker" style="color:var(--taupe)">The engine</span><h4>The Reels Engine</h4><ul><li><span>Your look</span><b>From day one</b></li><li><span>Turnaround</span><b>Minutes, on your Mac</b></li><li><span>Changes</span><b>"Make it calmer"</b></li><li><span>Publishing</span><b>Straight to Instagram and Facebook</b></li><li><span>Cost</span><b>One payment</b></li></ul></div>
   </div>
 </section>
 
 <!-- MATH -->
 <section class="sec math" aria-labelledby="math-h">
-  <div class="idx" style="justify-content:center">06 · The math</div>
+  <div class="idx" style="justify-content:center">The math</div>
   <h2 class="h3" id="math-h">What a month of reels <span class="it">really</span> costs</h2>
   <div class="nums">
     <div><span class="n old">$2,400<i id="strike"></i></span><p class="s">A month with a freelance editor. Twelve reels at up to $200 each, plus your notes on every one.</p></div>
@@ -509,11 +561,16 @@ footer .legal{margin-top:24px;font-size:11px;opacity:.6;padding-bottom:70px}
 <section class="sec eco" aria-labelledby="eco-h">
   <div class="grid">
     <div>
-      <div class="idx">07 · Where this leads</div>
+      <div class="idx">Where this leads</div>
       <h2 class="h2" id="eco-h"><span class="ln"><span>This is</span></span><span class="ln"><span>one engine.</span></span><span class="ln"><span class="it cr">My clients run</span></span><span class="ln"><span class="it cr">the whole system.</span></span></h2>
-      <p class="lede" style="margin-top:30px">Inside the Authentic AI Content System, one voice note becomes a reel, a carousel, an email and a post, in your voice, built around your ideal client and your offers. The Reels Engine is the first piece I hand you, so you feel what happens when production stops depending on your hours.</p>
-      <p class="lede" style="margin-top:14px;color:var(--ink)">The reels were never the bottleneck. You were. That is the part we fix next.</p>
-      <a class="u" href="#" data-apply hidden>Ask about the full system <span>→</span></a>
+      <p class="lede" style="margin-top:30px">Inside the Authentic AI Content System, one voice note becomes a reel, a carousel, an email and a post, in your voice, built around your ideal client and your offers. The Reels Engine is a taste of how I build: meticulous, detailed, and always in service of you. Imagine that level of care across everything you publish.</p>
+      <ol class="eco-steps">
+        <li><b>Find your voice</b>Before any automation, we define who you are speaking to, what you sell and how you sound, so AI has something real to amplify.</li>
+        <li><b>Your custom engine</b>Built on your voice, your look and your workflow, so the back and forth with your team runs through one system instead of your DMs.</li>
+        <li><b>Scale</b>One voice note becomes reels, carousels, emails and posts, at the quality you produce today and at a volume one person never could.</li>
+      </ol>
+      <p class="lede" style="margin-top:22px;color:var(--ink)">The reels were never the bottleneck. You were. That is the part we fix next.</p>
+      <a class="u" href="#" data-apply hidden>Ask about the Authentic AI Content System <span>→</span></a>
     </div>
     <div class="viz" aria-label="One voice note becomes reels, carousels, emails and posts">
       <svg viewBox="0 0 560 560" id="ecoSvg">
@@ -542,12 +599,12 @@ footer .legal{margin-top:24px;font-size:11px;opacity:.6;padding-bottom:70px}
   <div class="grid">
     <div class="img" id="fndImg"><img src="assets/cta.jpg" alt="Malika raising a glass, seated on a white cube in the studio"></div>
     <div class="copy">
-      <div class="idx">08 · Why I built it</div>
+      <div class="idx">Why I built it</div>
       <h2 class="h2" id="fnd-h" style="margin-bottom:34px"><span class="ln"><span>For my own</span></span><span class="ln"><span class="it cr">brand first.</span></span></h2>
       <p>I'm Malika. Through She Who Scales I work with women founders on two things at once: who they need to become for the next level, and the systems that let them grow without being the cost of it.</p>
       <p>The hardest part of my own business was never the ideas or the camera. It was consistency. I would film something I was proud of, and it would sit there, because editing it to my standard took hours I did not have.</p>
-      <p>So I built the engine I now use every week. Not to post more noise. To show up more often, at the same quality, without the hours.</p>
-      <p class="pull">Automation takes the hours. Never the soul.</p>
+      <p>I have spent the past three years inside AI, engineering the prompts and systems behind my own content and my clients'. So I built the engine I now use every week. Not to post more noise. To show up more often, at the same quality, without the hours.</p>
+      <p class="pull">Let AI amplify your voice. Never replace it.</p>
       <div class="sig" id="sig">Malika</div>
     </div>
   </div>
@@ -555,11 +612,11 @@ footer .legal{margin-top:24px;font-size:11px;opacity:.6;padding-bottom:70px}
 
 <!-- FIT -->
 <section class="sec fit" style="padding-top:0" aria-labelledby="fit-h">
-  <div class="idx">09 · An honest fit check</div>
+  <div class="idx">An honest fit check</div>
   <h2 class="h2" id="fit-h"><span class="ln"><span>Not for everyone.</span></span><span class="ln"><span class="it cr">On purpose.</span></span></h2>
   <div class="grid">
-    <div class="c" data-rv><h4>For you if</h4><ul><li>You already have a business and an audience, and your content has not kept up.</li><li>You care how your brand looks, and you will not post anything that feels cheap.</li><li>You talk to camera, or you are ready to.</li><li>You want more volume without more meetings with an editor.</li></ul></div>
-    <div class="c no" data-rv><h4>Not for you if</h4><ul><li>You want trending templates and viral sound hacks.</li><li>You want an app that posts for you with no review.</li><li>You only work from a phone, with no Mac or PC.</li><li>You will not give setup one focused sitting.</li></ul></div>
+    <div class="c" data-rv><h4>For you if</h4><ul><li>You already have a business and an audience, and your content has not kept up.</li><li>You care how your brand looks and sounds, and you will not post anything that feels like AI wrote it.</li><li>You talk to camera, or you are ready to.</li><li>You want more volume without more meetings with an editor.</li></ul></div>
+    <div class="c no" data-rv><h4>Not for you if</h4><ul><li>You want trending templates and viral sound hacks.</li><li>You never want to be on camera.</li><li>You do not have a Mac.</li><li>You will not give setup one focused sitting.</li></ul></div>
   </div>
 </section>
 
@@ -567,7 +624,7 @@ footer .legal{margin-top:24px;font-size:11px;opacity:.6;padding-bottom:70px}
 <section class="sec price" id="pricing" aria-labelledby="price-h">
   <div class="grid">
     <div>
-      <div class="idx">10 · Founding release</div>
+      <div class="idx">Founding release</div>
       <h2 class="h3" id="price-h">Set it up once. <span class="it">Keep it for good.</span></h2>
       <div class="big"><sup>$</sup><span data-num>111</span></div>
       <p class="later" data-show="deadline">Founding price until <span data-dl-label></span>. Then <s data-next>$197</s>.</p>
@@ -578,15 +635,16 @@ footer .legal{margin-top:24px;font-size:11px;opacity:.6;padding-bottom:70px}
       <div class="clock" data-show="deadline" aria-label="Time left at the founding price"><div><b data-d>00</b><small>DAYS</small></div><div><b data-h>00</b><small>HRS</small></div><div><b data-m>00</b><small>MIN</small></div><div><b data-s>00</b><small>SEC</small></div></div>
       <ul>
         <li>The full engine, pre-built and ready to install</li>
-        <li>Step-by-step setup lessons for Mac and PC</li>
+        <li>Guided setup on your Mac</li>
         <li>Your fonts, colors and brand look, built in</li>
         <li>Style matching from any reel you love</li>
-        <li>Finished videos or editable CapCut projects</li>
+        <li>Post captions drafted for every reel</li>
+        <li>Publishing from your Mac to Instagram and Facebook</li>
         <li>Every future update</li>
       </ul>
-      <a class="btn" href="#" data-checkout data-buy data-mag><span class="t"><span data-t="Start my engine">Start my engine</span></span><span class="dot"></span></a>
-      <p class="fine">Requires a Mac (macOS 13 or newer, Apple chip recommended) or a Windows 10 or 11 PC, a paid Claude plan (about $20 a month, paid to Anthropic) and the free CapCut app.</p>
-      <div class="promise"><b>The setup promise</b>If you follow the setup lessons and it will not run on your computer, message us within 14 days for a full refund.</div>
+      <a class="btn" href="#" data-checkout data-buy data-mag><span class="t"><span data-t="Claim founding access">Claim founding access</span></span><span class="dot"></span></a>
+      <p class="fine">Requires a Mac (macOS 13 or newer) and a paid Claude plan, about $20 a month, paid to Anthropic.</p>
+      <div class="promise"><b>Instant access</b>This is a digital product delivered the moment you join, so all sales are final.</div>
     </div>
   </div>
 </section>
@@ -594,15 +652,16 @@ footer .legal{margin-top:24px;font-size:11px;opacity:.6;padding-bottom:70px}
 <!-- FAQ -->
 <section class="sec faq" id="faq" aria-labelledby="faq-h">
   <div class="grid">
-    <div><div class="idx">11 · Still deciding</div><h2 class="h2" id="faq-h"><span class="ln"><span>The honest</span></span><span class="ln"><span class="it cr">answers.</span></span></h2></div>
+    <div><div class="idx">Still deciding</div><h2 class="h2" id="faq-h"><span class="ln"><span>The honest</span></span><span class="ln"><span class="it cr">answers.</span></span></h2></div>
     <div>
       <div class="qa"><button type="button" aria-expanded="false">Will it look like me, or like AI?<i></i></button><div class="a"><div><p>Like you. It works from your own footage, in your fonts and colors, and you can point it at any reel whose style you admire. You approve every reel, and it learns your preferences as you go.</p></div></div></div>
-      <div class="qa"><button type="button" aria-expanded="false">I already have an editor. Why would I need this?<i></i></button><div class="a"><div><p>Keep them. The engine does the first 90 percent: the cut, the captions, the styling. Your editor finishes an editable CapCut project instead of starting from a raw clip. More reels from the same budget, fewer notes on every one.</p></div></div></div>
-      <div class="qa"><button type="button" aria-expanded="false">I'm not technical. Can I set this up?<i></i></button><div class="a"><div><p>Yes. Setup is the most technical part, and the lessons walk you through it on a Mac or a PC, one step at a time. After that you direct it in plain sentences. Or hand the lessons to your assistant.</p></div></div></div>
-      <div class="qa"><button type="button" aria-expanded="false">What do I need to run it?<i></i></button><div class="a"><div><p>A Mac on macOS 13 or newer, or a Windows 10 or 11 PC (not one with a Snapdragon chip), about 10 GB of free space, a paid Claude plan at about $20 a month paid to Anthropic, and the free CapCut app. Intel Macs work, slower, with a few extras off.</p></div></div></div>
-      <div class="qa"><button type="button" aria-expanded="false">Does it post for me?<i></i></button><div class="a"><div><p>No, on purpose. It hands you a finished, post-ready reel, and you or your team publish it. Nothing goes live without your yes.</p></div></div></div>
+      <div class="qa"><button type="button" aria-expanded="false">I already have an editor. Why would I need this?<i></i></button><div class="a"><div><p>Keep them for the big pieces. The engine handles the everyday reels, so your editor's hours go to the content that deserves them, and you stop sending notes on every clip.</p></div></div></div>
+      <div class="qa"><button type="button" aria-expanded="false">I'm not technical. Can I set this up?<i></i></button><div class="a"><div><p>Yes. Setup is the most technical part, and the guided setup walks you through it on your Mac, one step at a time. After that you direct it in plain sentences. Or hand the setup to your assistant.</p></div></div></div>
+      <div class="qa"><button type="button" aria-expanded="false">What do I need to run it?<i></i></button><div class="a"><div><p>A Mac on macOS 13 or newer, some free space for your footage, and a paid Claude plan at about $20 a month, paid to Anthropic. That is it. No editing app.</p></div></div></div>
+      <div class="qa"><button type="button" aria-expanded="false">Does it post for me?<i></i></button><div class="a"><div><p>Yes. Once you approve a reel, it publishes from your Mac straight to Instagram and Facebook, with the caption it drafted. Nothing goes live without your yes.</p></div></div></div>
+      <div class="qa"><button type="button" aria-expanded="false">Does it write captions too?<i></i></button><div class="a"><div><p>It drafts the post caption for each reel from what you said on camera, so every reel is ready to publish. Captions written in your full brand voice, built around your ideal client and offers, are part of the Authentic AI Content System.</p></div></div></div>
       <div class="qa"><button type="button" aria-expanded="false">Is this the Authentic AI Content System?<i></i></button><div class="a"><div><p>No. This is one engine from it, the one for reels. The full system turns one voice note into every format, built around your ideal client and your offers, with me. Many founders start here.</p></div></div></div>
-      <div class="qa"><button type="button" aria-expanded="false">What if I get stuck?<i></i></button><div class="a"><div><p>Message us and we will help you get it running. If you follow the setup lessons and it will not run on your computer, you get a full refund within 14 days.</p></div></div></div>
+      <div class="qa"><button type="button" aria-expanded="false">What if I get stuck?<i></i></button><div class="a"><div><p>Message us and we will help you get it running. Support details arrive with your access.</p></div></div></div>
     </div>
   </div>
 </section>
@@ -612,7 +671,7 @@ footer .legal{margin-top:24px;font-size:11px;opacity:.6;padding-bottom:70px}
   <div class="ph" data-speed="-.06"><img src="assets/portrait.jpg" alt=""></div>
   <h2 id="close-h"><span class="ln"><span>The face of</span></span><span class="ln"><span>the brand</span></span><span class="ln mb"><span class="b">doesn't edit.</span></span></h2>
   <div class="row">
-    <a class="btn cream" href="#pricing" data-checkout data-mag><span class="t"><span data-t="Start my engine">Start my engine</span></span><span class="dot"></span></a>
+    <a class="btn cream" href="#pricing" data-checkout data-mag><span class="t"><span data-t="Be everywhere">Be everywhere</span></span><span class="dot"></span></a>
     <p>Show up every week as the face of your brand, without losing your week to editing.</p>
   </div>
 </section>
@@ -621,10 +680,10 @@ footer .legal{margin-top:24px;font-size:11px;opacity:.6;padding-bottom:70px}
 <footer>
   <div class="r"><span>The Reels Engine · by She Who Scales</span><span><a href="#">Privacy</a><a href="#">Terms</a><a href="#top">Back to top ↑</a></span></div>
   <div class="wm">She Who <i>Scales</i></div>
-  <p class="legal">© 2026 She Who Scales. CapCut is a trademark of its owner. The Reels Engine is not affiliated with CapCut or Anthropic.</p>
+  <p class="legal">© 2026 She Who Scales. The Reels Engine is not affiliated with Anthropic or Meta.</p>
 </footer>
 
-<div class="buybar" id="buybar"><div><small>Founding price</small><b data-price>$111</b></div><a class="btn sm cream" href="#pricing" data-checkout>Start my engine</a></div>
+<div class="buybar" id="buybar"><div><small>Founding price</small><b data-price>$111</b></div><a class="btn sm cream" href="#pricing" data-checkout>Be everywhere</a></div>
 
 <script src="assets/vendor/gsap.min.js"></script>
 <script src="assets/vendor/ScrollTrigger.min.js"></script>
@@ -657,8 +716,15 @@ footer .legal{margin-top:24px;font-size:11px;opacity:.6;padding-bottom:70px}
   if(C.demoVideo){var f=$('#filmFrame'),el;
     if(/\.mp4($|\?)/.test(C.demoVideo)){el=doc.createElement('video');el.src=C.demoVideo;el.controls=true;el.playsInline=true;el.preload='metadata';el.poster='assets/detail.jpg'}
     else{el=doc.createElement('iframe');el.src=C.demoVideo;el.title='Full demo';el.allow='autoplay; fullscreen; picture-in-picture';el.allowFullscreen=true}
-    f.appendChild(el);$('#film').classList.add('on');$$('[data-demo-length]').forEach(function(e){e.textContent=C.demoLength||''})}
+    $('#demoPh').remove();f.appendChild(el)}
+  $$('[data-demo-length]').forEach(function(e){e.textContent=C.demoLength?C.demoLength+' · full length':''});
   if(C.applyUrl){$$('[data-apply]').forEach(function(a){a.href=C.applyUrl;a.hidden=false})}
+
+  /* ---------- testimonials (real words only; drafts show a visible tag) ---------- */
+  var vg=$('#vgrid'),T=(C.testimonials||[]).filter(function(t){return t&&t.quote});
+  var esc=function(x){var d=doc.createElement('div');d.textContent=x||'';return d.innerHTML};
+  if(T.length){vg.innerHTML=T.slice(0,3).map(function(t){return '<figure class="vcard" data-rv><q>'+esc(t.quote)+'</q><figcaption class="who"><i>'+esc((t.name||'?').charAt(0))+'</i><span><b>'+esc(t.name)+'</b><small>'+esc(t.role)+'</small></span></figcaption></figure>'}).join('')}
+  else{vg.innerHTML=['Her words on how many reels she posts now, and how long it used to take.','Her words on what changed when publishing ran from her laptop.','Her words on keeping her voice while posting more.'].map(function(h){return '<figure class="vcard draft" data-rv><span class="tag">Awaiting a real client quote</span><q>'+h+'</q><figcaption class="who"><i>·</i><span><b>Client name</b><small>What she does</small></span></figcaption></figure>'}).join('')}
 
   /* ---------- faq ---------- */
   $$('.qa button').forEach(function(b){b.addEventListener('click',function(){b.setAttribute('aria-expanded',b.getAttribute('aria-expanded')==='true'?'false':'true');window.ScrollTrigger&&setTimeout(function(){ScrollTrigger.refresh()},750)})});
