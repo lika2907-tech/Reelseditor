@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Startup Mom Audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --offwhite:#d9d9d9; --crimson:#931414; --burgundy:#550b14; --cream:#f8f8f7;
+  --taupe:#cbc0b2; --brown:#7e6961; --ink:#2a1a1c; --line:rgba(85,11,20,.16);
+  --card:#ffffff; --bg:var(--cream); --text:var(--ink); --muted:var(--brown); --head:var(--burgundy);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#1b0c0f;--card:#261317;--text:#f8f8f7;--muted:#cbc0b2;--line:rgba(203,192,178,.2);--crimson:#d24a4a;--head:#f8f8f7}
+}
+:root[data-theme="dark"]{--bg:#1b0c0f;--card:#261317;--text:#f8f8f7;--muted:#cbc0b2;--line:rgba(203,192,178,.2);--crimson:#d24a4a;--head:#f8f8f7}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:400 16px/1.65 Montserrat,system-ui,sans-serif}
+.wrap{max-width:920px;margin:0 auto;padding:48px 16px 96px}
+h1,h2,h3{font-family:'Playfair Display',Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(32px,6vw,52px);color:var(--head)}
+h2{font-size:clamp(24px,4vw,32px);margin-top:2.2em;padding-top:1.2em;border-top:1px solid var(--line)}
+h3{font-size:20px;margin-top:1.6em}
+.eyebrow{font:600 12px/1 Montserrat;letter-spacing:.24em;text-transform:uppercase;color:var(--crimson);margin-bottom:14px}
+.lede{font-size:18px;color:var(--muted);max-width:680px}
+.scores{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:32px 0}
+.score{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--crimson);padding:18px 20px}
+.score b{display:block;font:700 34px/1 'Playfair Display',serif;color:var(--crimson)}
+.score span{font-size:13px;color:var(--muted)}
+.callout{background:var(--burgundy);color:var(--cream);padding:22px 24px;margin:24px 0}
+.callout strong{color:#fff}
+.table-wrap{overflow-x:auto;margin:16px 0;border:1px solid var(--line);background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:640px}
+th,td{text-align:left;vertical-align:top;padding:12px 14px;border-bottom:1px solid var(--line)}
+th{font:600 11px/1.3 Montserrat;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);background:rgba(203,192,178,.18)}
+.tag{display:inline-block;font:600 11px/1 Montserrat;letter-spacing:.1em;text-transform:uppercase;padding:5px 8px;border-radius:2px}
+.crit{background:var(--crimson);color:#fff}.high{background:var(--burgundy);color:#fff}.med{background:var(--taupe);color:#2a1a1c}
+ol,ul{padding-left:22px}li{margin:.35em 0}
+.swap{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0 18px}
+.swap div{background:var(--card);border:1px solid var(--line);padding:14px 16px;font-size:14px}
+.swap .old{border-left:4px solid var(--taupe)}.swap .new{border-left:4px solid var(--crimson)}
+.swap small{display:block;font:600 10px/1 Montserrat;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+@media (max-width:620px){.swap{grid-template-columns:1fr}}
+.sig{font-family:'Playfair Display',serif;font-style:italic;color:var(--brown);margin-top:48px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Funnel OS + Buyer Readiness Audit</div>
+  <h1>The Reels Editing Engine, The Startup Mom, $97</h1>
+  <p class="lede">The same product as The Reels Engine, sold to a different audience: moms building a business in nap windows. This audit scores the page against its own audience, then compares it with the She Who Scales page so each one can borrow what the other does better.</p>
+
+  <div class="scores">
+    <div class="score"><b>8/10</b><span>Urgency to purchase</span></div>
+    <div class="score"><b>8/10</b><span>Audience fit (moms, nap windows)</span></div>
+    <div class="score"><b>3/10</b><span>Rich buyer attraction</span></div>
+    <div class="score"><b>7/10</b><span>Trust closing</span></div>
+  </div>
+
+  <div class="callout"><strong>The headline:</strong> this page closes much better than the She Who Scales page. It has a real deadline, real numbers, real beta DMs and a full 16 minute demo. Its weak spots are the order of its sections (technical requirements come before desire), a missing guarantee, and an emotional "why" that sits at the very bottom.</div>
+
+  <h2>1. Check these first</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Issue</th><th>Severity</th><th>Fix</th></tr>
+    <tr><td>Seven FAQ answers came through blank in the paste ("Will it look like me?", "I already use CapCut", "Do I need CapCut Pro?", "How many reels?", "Is the price worth it?", "Will this work on my computer?", "What if I get stuck?"). They are probably collapsed accordions, but confirm they all have answers on the live page.</td><td><span class="tag crit">Verify</span></td><td>Open each one on mobile and desktop.</td></tr>
+    <tr><td>No refund policy or guarantee is visible anywhere. "What if I get stuck?" is the only risk question, and the answer did not come through.</td><td><span class="tag high">High</span></td><td>Name the policy right under the price. Example: "Stuck in setup? Message me. If it will not run on your computer, you get your money back."</td></tr>
+    <tr><td>The closing price line ("$97, one time. Cart closes Wednesday...") has no button after it in the paste. The only checkout link found is after the 4 steps.</td><td><span class="tag high">High</span></td><td>Put a button directly under the closing price line, and add a sticky buy bar on mobile.</td></tr>
+    <tr><td>Proof stats are unlabeled: "184,167 plays, +3,265 followers, 8K likes, 27s avg watch". A buyer cannot tell whose numbers these are or what made them.</td><td><span class="tag med">Medium</span></td><td>"One reel, edited by the engine: 184,167 plays and 3,265 new followers." Label it, link it to the reel.</td></tr>
+    <tr><td>"Pro" badges on the Editorial and Playful style packs, while Butter is "Completely free". This suggests the Pro packs cost extra, and no price is shown.</td><td><span class="tag med">Medium</span></td><td>If they are included, change "Pro" to "Included". If they cost extra, name them as an order bump with a price.</td></tr>
+  </table></div>
+
+  <h2>2. Does it create urgency?</h2>
+  <p><strong>Yes, and it is honest.</strong> A live countdown, a named day and time ("Wednesday, Oct 7, 10am CT"), and the deadline is repeated at the close. Three things would make it stronger:</p>
+  <ul>
+    <li><strong>Say what happens after Wednesday.</strong> Does the cart close until the next launch, or does the price go up? "After Wednesday, doors close until [month] and the price goes to $[X]" turns the timer from a date into a real cost of waiting.</li>
+    <li><strong>Tie urgency to her life, not your launch.</strong> "Every week you wait is another nap window spent in CapCut."</li>
+    <li><strong>Close-cart emails.</strong> With 3 days left, she needs emails 48 hours, 24 hours and 3 hours before close, plus abandon-cart emails for anyone who opened checkout. Check that buyers come off the list the moment they pay.</li>
+  </ul>
+  <p>Be sure the timer is real. A countdown that resets for every visitor is a trust and FTC problem. This one names a real date, which is the right way.</p>
+
+  <h2>3. Does it attract a rich buyer?</h2>
+  <p><strong>No, and for this audience that is mostly fine.</strong> The page is written for a mom who wants her time back and who cannot pay an editor yet ("You would hire an editor, but that is not in the budget"). It is honest and matches the brand. But it leaves money on the table in two places:</p>
+  <ul>
+    <li><strong>No way to pay more.</strong> The setup is the hardest part (macOS 13, Windows 10, CapCut, 10 GB, Intel caveats). That is exactly what a busier mom with money would pay to skip. Add a "We set it up with you" option, a live group setup call or a 1:1 install, at $197 to $297.</li>
+    <li><strong>The "why" is at the bottom.</strong> "The reels were never the point. Being here was. ... stay in the room where the little moments happen." This is the strongest line on the page and the real identity purchase. Most buyers never scroll that far.</li>
+  </ul>
+  <div class="swap"><div class="old"><small>Now (hero)</small>Edit your reel <s>in hours</s> automatically.</div><div class="new"><small>Identity first</small>Post the reel. Stay in the room. Your editing, done in a nap window.</div></div>
+  <div class="swap"><div class="old"><small>Now (pain)</small>You would hire an editor, but that is not in the budget.</div><div class="new"><small>Stronger</small>You have filmed it. It is good. And it is still sitting in your camera roll because the edit takes longer than naptime.</div></div>
+  <div class="swap"><div class="old"><small>Now (CTA)</small>Get the engine →</div><div class="new"><small>Result-driven</small>Give me my nap windows back →</div></div>
+
+  <h2>4. Buyer Readiness Stage Map</h2>
+  <p>Assumed traffic: her Instagram followers and email list during an open-cart launch, so mostly product-aware and most-aware, with some problem-aware followers coming from Reels.</p>
+  <div class="table-wrap"><table>
+    <tr><th>Stage</th><th>Audience here</th><th>Page content serving it</th><th>Mismatch</th><th>Fix</th></tr>
+    <tr><td>Problem-aware</td><td>Moms who film and never post</td><td>"Sick of editing taking forever?" and 3 pain bullets</td><td>Short and generic. Placed after the first CTA, so the problem is named after the ask.</td><td>Move one specific nap-window line into the hero. Make the bullets more specific to her day.</td></tr>
+    <tr><td>Solution-aware</td><td>Knows CapCut, templates, editors</td><td>"I already use CapCut" FAQ, the editable CapCut draft, "Most AI editors give you a locked video"</td><td>The best differentiator on the page (you keep every layer in CapCut) is in the middle, not near the top.</td><td>Pull it into a short "Editor vs CapCut alone vs the engine" strip under the proof stats.</td></tr>
+    <tr><td>Product-aware</td><td>Followers deciding</td><td>Proof stats, raw vs finished toggle, 16:05 unedited demo, beta DMs, Meg's story</td><td>Strong, but the <strong>requirements block lands here, before formats, styles and testimonials</strong>. Talk of macOS versions, Snapdragon chips and Intel slowness makes a non-techy mom feel "this is not for me" before she has seen what she gets.</td><td>Re-sequence: keep one line near the top ("Mac or PC, a Claude plan and free CapCut") and move the full requirements next to the FAQ, just before the price.</td></tr>
+    <tr><td>Most-aware</td><td>Ready to buy before Wednesday</td><td>Countdown, "$97, one time", "Keep it forever"</td><td>No guarantee, no button visible at the close, no list of what she gets for $97 (lessons, style packs, updates, Spanish).</td><td>Add a pricing card with an included list, the guarantee and a button. Repeat the countdown there.</td></tr>
+  </table></div>
+
+  <h2>5. Same product, two pages: what each should borrow</h2>
+  <div class="table-wrap"><table>
+    <tr><th></th><th>The Startup Mom ($97)</th><th>She Who Scales ($111)</th></tr>
+    <tr><td>Audience</td><td>Moms, nap windows, faith-led, Spanish speakers, do-it-yourself</td><td>Women building and scaling businesses</td></tr>
+    <tr><td>Urgency</td><td>Real date and countdown</td><td>"Founding release" with no end</td></tr>
+    <tr><td>Proof</td><td>Real numbers, real beta DMs, 16 minute unedited demo</td><td>Placeholders</td></tr>
+    <tr><td>Founder story</td><td>Specific: 10 year career, 12 weeks with her son, millions of views</td><td>Relatable, no numbers</td></tr>
+    <tr><td>Honesty about setup</td><td>Full requirements, Intel caveats, music licensing note</td><td>"20 minutes", "from your phone"</td></tr>
+    <tr><td>Value framing</td><td>"Pays for itself the first time"</td><td>"One engine replaces" list and the $2,400 math (stronger)</td></tr>
+    <tr><td>CTAs</td><td>Few buttons, none at the close</td><td>Many buttons, sticky bar (but checkout link is dead)</td></tr>
+  </table></div>
+
+  <h3>The big one: the two pages describe different products</h3>
+  <p>If this really is the same engine, the She Who Scales page promises things this page does not:</p>
+  <div class="table-wrap"><table>
+    <tr><th>She Who Scales says</th><th>The Startup Mom says</th><th>Risk</th></tr>
+    <tr><td>"Works with Claude or ChatGPT"</td><td>"A paid Claude plan", "Powered by Claude × CapCut"</td><td><span class="tag crit">Refunds</span></td></tr>
+    <tr><td>"It posts for you", "schedules the week"</td><td>"Post it." She posts it herself. No scheduling is mentioned.</td><td><span class="tag crit">Refunds</span></td></tr>
+    <tr><td>"Film and upload from anywhere", "your phone"</td><td>"You edit on your computer, not your phone", about 10 GB free</td><td><span class="tag high">High</span></td></tr>
+    <tr><td>"Guided 20-minute install"</td><td>Full setup lessons, Mac and PC versions, CapCut install</td><td><span class="tag med">Medium</span></td></tr>
+    <tr><td>"No editing app to open"</td><td>CapCut must be installed (opening it is optional)</td><td><span class="tag med">Medium</span></td></tr>
+  </table></div>
+  <p>Before the She Who Scales page goes live, either confirm your version really adds ChatGPT, phone upload and auto-posting, or rewrite those claims to match what the engine does. Also decide on price: a buyer who finds the same engine at $97 here will ask why it is $111 on your page. The fix is either a real difference (setup help, a She Who Scales style pack, community) or matching the price.</p>
+
+  <h3>She Who Scales should borrow from The Startup Mom</h3>
+  <ul>
+    <li>A real deadline with a date and time, and a countdown.</li>
+    <li>Proof with numbers ("184,167 plays") and real beta DMs, plus the line "names are off because they wrote to me, not to a sales page".</li>
+    <li>The full unedited demo with its exact length shown.</li>
+    <li>The CapCut editable-draft point: "Most AI editors hand you a locked video."</li>
+    <li>A founder story with a specific before and a measurable after.</li>
+    <li>An honest requirements block, kept near the FAQ.</li>
+  </ul>
+  <h3>The Startup Mom should borrow from She Who Scales</h3>
+  <ul>
+    <li>The "one engine replaces" list and the concrete monthly editor math.</li>
+    <li>A pricing card with everything included listed.</li>
+    <li>Buttons after every major section and a sticky mobile buy bar.</li>
+    <li>"One raw clip, three styles" rows, which show range better than the style pack labels.</li>
+  </ul>
+
+  <h2>6. Funnel OS: assets for a $97 launch</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Asset</th><th>Status</th><th>Skill to build it</th></tr>
+    <tr><td>Sales page</td><td>Live, fixes above</td><td>this audit</td></tr>
+    <tr><td>Checkout with order bump (Pro style packs or a setup call)</td><td>Live, bump unknown</td><td><code>low-ticket-checkout-page</code></td></tr>
+    <tr><td>Abandon cart and cart-close emails</td><td>Unknown, needed before Wednesday</td><td><code>email-bof-abandon-cart</code></td></tr>
+    <tr><td>Delivery page with one-time upsell</td><td>Unknown</td><td><code>low-ticket-delivery-page</code></td></tr>
+    <tr><td>Post-purchase nurture toward community or coaching</td><td>Unknown</td><td>Funnel OS nurture prompt</td></tr>
+  </table></div>
+
+  <h2>Priority order</h2>
+  <ol>
+    <li>Before Wednesday: confirm the FAQ answers, add a guarantee and a button at the close, send cart-close emails.</li>
+    <li>Label the proof stats and clear up the "Pro" style pack badges.</li>
+    <li>Move the full requirements block down to the FAQ and leave one line near the top.</li>
+    <li>Bring the "stay in the room" line up to the hero.</li>
+    <li>Add a paid setup-help option for buyers who want to skip the technical part.</li>
+    <li>Make the She Who Scales page match what the engine actually does, then give it its own deadline and price reason.</li>
+  </ol>
+  <p class="sig">She Who Scales</p>
+</div>
+</body>
+</html>
