@@ -3,6 +3,25 @@
 Malika's feedback, kept for the next edit round. The live page is the first
 redesign (commit aa96e97). No edits until the new video footage arrives.
 
+## Direction (applies to everything)
+- **Old money. High-level, rich-buyer experience.** Quiet, restrained, expensive.
+  Nothing that reads as hype, gimmick or template.
+- **Mobile first.** Most visitors arrive from Instagram, on a phone, inside the
+  Instagram in-app browser. Design and review every section at phone width first.
+  - The loader adds about 3 seconds before anything shows. Cut it on mobile or make it very short.
+  - Test the pinned sections and smooth scrolling inside the Instagram browser.
+  - Keep tap targets large, text readable without zooming, and the buy button
+    always within reach.
+
+## Cringe, cheap, not her style (remove everywhere, never reuse)
+- "Your final yes"
+- "Raw", "Refined", "Ready" and "Raw to ready"
+- "In your look", "Never slop"
+- The marquee band of these words, the star separators and the outlined type
+- The spinning circular badge text
+- "Be everywhere" as a CTA, "Claim founding access"
+- "Be everywhere. Edit nothing." as the headline
+
 ## Keep
 - The overall look of the first redesign. Malika preferred it to the feedback round.
 - The "one voice note becomes reels, carousels, emails, posts" diagram.
