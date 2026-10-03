@@ -22,6 +22,13 @@ redesign (commit aa96e97). No edits until the new video footage arrives.
 - "Be everywhere" as a CTA, "Claim founding access"
 - "Be everywhere. Edit nothing." as the headline
 
+## Typography
+- Playfair Display (especially its swashy italic) reads as generic, "made by Claude".
+  Replace the headline face with something more luxury. Options shown: Bodoni Moda,
+  Cormorant Garamond Light, Libre Caslon, Gilda Display, Italiana. Recommended:
+  Cormorant Garamond Light. Waiting on Malika's pick. This also changes the brand
+  guide, which lists Playfair Display.
+
 ## Keep
 - The overall look of the first redesign. Malika preferred it to the feedback round.
 - The "one voice note becomes reels, carousels, emails, posts" diagram.
