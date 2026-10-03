@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reels Engine Audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --offwhite:#d9d9d9; --crimson:#931414; --burgundy:#550b14; --cream:#f8f8f7;
+  --taupe:#cbc0b2; --brown:#7e6961; --ink:#2a1a1c; --line:rgba(85,11,20,.16);
+  --card:#ffffff; --bg:var(--cream); --text:var(--ink); --muted:var(--brown);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#1b0c0f;--card:#261317;--text:#f8f8f7;--muted:#cbc0b2;--line:rgba(203,192,178,.2);--crimson:#d24a4a}
+}
+:root[data-theme="dark"]{--bg:#1b0c0f;--card:#261317;--text:#f8f8f7;--muted:#cbc0b2;--line:rgba(203,192,178,.2);--crimson:#d24a4a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:400 16px/1.65 Montserrat,system-ui,sans-serif}
+.wrap{max-width:920px;margin:0 auto;padding:48px 16px 96px}
+h1,h2,h3{font-family:'Playfair Display',Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(32px,6vw,52px);color:var(--burgundy)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) h1{color:var(--cream)}}
+h2{font-size:clamp(24px,4vw,32px);margin-top:2.2em;padding-top:1.2em;border-top:1px solid var(--line)}
+h3{font-size:20px;margin-top:1.6em}
+.eyebrow{font:600 12px/1 Montserrat;letter-spacing:.24em;text-transform:uppercase;color:var(--crimson);margin-bottom:14px}
+.lede{font-size:18px;color:var(--muted);max-width:680px}
+.scores{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:32px 0}
+.score{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--crimson);padding:18px 20px}
+.score b{display:block;font:700 34px/1 'Playfair Display',serif;color:var(--crimson)}
+.score span{font-size:13px;color:var(--muted)}
+.callout{background:var(--burgundy);color:var(--cream);padding:22px 24px;margin:24px 0}
+.callout strong{color:#fff}
+.table-wrap{overflow-x:auto;margin:16px 0;border:1px solid var(--line);background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:640px}
+th,td{text-align:left;vertical-align:top;padding:12px 14px;border-bottom:1px solid var(--line)}
+th{font:600 11px/1.3 Montserrat;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);background:rgba(203,192,178,.18)}
+.tag{display:inline-block;font:600 11px/1 Montserrat;letter-spacing:.1em;text-transform:uppercase;padding:5px 8px;border-radius:2px}
+.crit{background:var(--crimson);color:#fff}.high{background:var(--burgundy);color:#fff}.med{background:var(--taupe);color:#2a1a1c}
+ol,ul{padding-left:22px}li{margin:.35em 0}
+.swap{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0 18px}
+.swap div{background:var(--card);border:1px solid var(--line);padding:14px 16px;font-size:14px}
+.swap .old{border-left:4px solid var(--taupe)}.swap .new{border-left:4px solid var(--crimson)}
+.swap small{display:block;font:600 10px/1 Montserrat;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+@media (max-width:620px){.swap{grid-template-columns:1fr}}
+.sig{font-family:'Playfair Display',serif;font-style:italic;color:var(--brown);margin-top:48px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Funnel OS + Buyer Readiness Audit</div>
+  <h1>The Reels Engine, $111</h1>
+  <p class="lede">A full audit of the sales page in <code>index.html</code>. Two questions: does it attract a rich buyer, and does it create urgency to buy now? Short answer: the page is beautifully built and the demo concept is strong, but right now it attracts a budget buyer, it has no real urgency, and nobody can actually check out.</p>
+
+  <div class="scores">
+    <div class="score"><b>4/10</b><span>Rich buyer attraction</span></div>
+    <div class="score"><b>2/10</b><span>Urgency to purchase</span></div>
+    <div class="score"><b>8/10</b><span>Clarity of mechanism</span></div>
+    <div class="score"><b>3/10</b><span>Trust closing (proof, risk reversal)</span></div>
+  </div>
+
+  <div class="callout"><strong>Fix before anything else:</strong> the main pricing button (<code>index.html:814</code>) links to <code>href="#"</code>. Every other "Get the Engine" button scrolls to that pricing section. Right now the page has zero working path to a checkout.</div>
+
+  <h2>1. Launch blockers</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Issue</th><th>Where</th><th>Severity</th><th>Fix</th></tr>
+    <tr><td>Pricing CTA goes nowhere</td><td>Pricing card, <code>href="#"</code></td><td><span class="tag crit">Critical</span></td><td>Connect the checkout link (Stripe, ThriveCart, Stan). Point the sticky buy bar straight at checkout too.</td></tr>
+    <tr><td>Internal build note is visible to buyers: "Demo note: replace the frame above..."</td><td>Demo section</td><td><span class="tag crit">Critical</span></td><td>Record the walkthrough, then delete the note.</td></tr>
+    <tr><td>4 testimonials are placeholder text, "Beta user name"</td><td>"In their own words"</td><td><span class="tag crit">Critical</span></td><td>Swap in real beta DMs, or hide the section until you have them. Placeholders destroy trust faster than no proof.</td></tr>
+    <tr><td>Refund and support FAQ is a placeholder</td><td>FAQ, "What if I get stuck?"</td><td><span class="tag crit">Critical</span></td><td>Write the actual policy (see risk reversal below).</td></tr>
+    <tr><td>No email captured before checkout</td><td>Whole funnel</td><td><span class="tag high">High</span></td><td>Without it, abandon cart emails are impossible. Use a 2-step checkout (email first) or an opt-in for the demo video.</td></tr>
+    <tr><td>Fonts are League Gothic / Jost / Ms Madi</td><td>CSS <code>:root</code></td><td><span class="tag med">Brand</span></td><td>Brand stack is Playfair Display + Montserrat. Decide whether this product has its own look on purpose or should match She Who Scales.</td></tr>
+  </table></div>
+
+  <h2>2. Does it attract a rich buyer?</h2>
+  <p><strong>Not yet.</strong> The page is written for a woman who cannot afford an editor. That is a real buyer, but she is not the one who later buys your coaching. Three lines do most of the damage:</p>
+  <ul>
+    <li><em>"You would hire an editor, but $200 a reel is not in the budget yet."</em> This is the pain line that selects your reader. It tells a woman with money that this page is not for her.</li>
+    <li><em>"The math: $2,400 vs $111."</em> Pure cost-saving framing. Premium buyers do not buy to save $2,289. They buy to get time back, keep quality high and stay in control.</li>
+    <li><em>"All for $111. Once."</em> The only price on the page is low, and there is no higher option. A woman who would happily pay $497 to have it set up for her has nowhere to put her money.</li>
+  </ul>
+
+  <h3>Rich buyer checklist (Funnel OS buyer psychology)</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Driver</th><th>Status</th><th>What is missing</th></tr>
+    <tr><td>Identity desire in the first 5 words</td><td>Partial</td><td>"Record once. Post all week." sells a task, not an identity. The best identity line on the page, "Show up as the face of your brand without losing your week", is buried in the final CTA.</td></tr>
+    <tr><td>Certainty in the result</td><td>Weak</td><td>No numbers from real users: hours saved, posts per week, reach. The only number is a cost comparison.</td></tr>
+    <tr><td>Certainty in the method</td><td>Strong</td><td>The 4 moves (Record, Drop, Edit, Post), the raw vs finished toggle and the 3 styles per clip are excellent. Keep them.</td></tr>
+    <tr><td>Certainty in herself</td><td>Good</td><td>"If you can send a text, you can run this" handles the non-techy fear well.</td></tr>
+    <tr><td>Certainty in you</td><td>Weak</td><td>"I built it for myself first" is relatable but has no measurable after. How many reels have you posted with it? What changed in your business?</td></tr>
+    <tr><td>Disqualification ("this is not for you if...")</td><td>Missing</td><td>Premium buyers trust pages that turn people away.</td></tr>
+  </table></div>
+
+  <h3>Copy swaps</h3>
+  <div class="swap"><div class="old"><small>Now</small>You would hire an editor, but $200 a reel is not in the budget yet.</div><div class="new"><small>Rich buyer</small>You could hire an editor. You did. And you still spend Sunday night sending notes, fixing captions and chasing files.</div></div>
+  <div class="swap"><div class="old"><small>Now</small>$2,400 a month of reels with a freelance editor, or $111.</div><div class="new"><small>Rich buyer</small>An editor costs $2,400 a month and still needs you. The engine costs $111 once, and needs you for 60 seconds of recording.</div></div>
+  <div class="swap"><div class="old"><small>Now</small>Record once. Post all week.</div><div class="new"><small>Rich buyer</small>Be the face of your brand every day. Spend 20 minutes a week on it.</div></div>
+  <div class="swap"><div class="old"><small>Now</small>Get the Engine</div><div class="new"><small>Result-driven CTA</small>Give me my week back</div></div>
+
+  <h3>Add a premium path on the same page</h3>
+  <p>Keep $111 as the entry, and add one higher option right beside it. This lifts average order value and signals quality to the wealthier buyer.</p>
+  <ul>
+    <li><strong>Order bump at checkout (around $47):</strong> "Signature Style Pack", 3 extra styles pre-tuned in your brand fonts and colors.</li>
+    <li><strong>Premium tier ($497, capped):</strong> "Done-with-you install", a 45-minute call where you set it up together, tune her style and schedule her first week. Cap it at a number you can actually deliver each month.</li>
+    <li><strong>Ascension:</strong> nothing currently points a buyer toward She Who Scales coaching. The delivery page and post-purchase emails are where that happens.</li>
+  </ul>
+
+  <h2>3. Does it create urgency?</h2>
+  <p><strong>No.</strong> The only urgency signal is the top bar: "Founding release $111". It has no end date, no cap and no next price, so a buyer reads it as the permanent price and bookmarks the page. Urgency must be real, or it becomes a trust problem.</p>
+  <div class="table-wrap"><table>
+    <tr><th>Lever</th><th>How to use it honestly</th></tr>
+    <tr><td>Price deadline</td><td>"Founding price $111 until [date]. Then $197." Put the date in the top bar, the pricing card and the sticky buy bar. Actually raise it.</td></tr>
+    <tr><td>Quantity cap</td><td>"First 100 founding members" with a live counter, or cap the $497 done-with-you seats at 10 a month.</td></tr>
+    <tr><td>Founding-only bonus</td><td>Something that disappears after the window: a live group setup session, or your personal style template.</td></tr>
+    <tr><td>Cost of waiting</td><td>"Every week you wait is 7 reels that stay in your camera roll." Ties urgency to her pain, not to your launch.</td></tr>
+    <tr><td>Abandon cart emails</td><td>3 emails over 48 hours, the last one sent before the price goes up. Needs email captured first.</td></tr>
+  </table></div>
+
+  <h2>4. Buyer Readiness Stage Map</h2>
+  <p>Assumed traffic: Instagram Reels and Stories (mostly problem-aware and solution-aware), plus warm followers who already know you (product-aware). Confirm if you plan ads or email traffic.</p>
+  <div class="table-wrap"><table>
+    <tr><th>Stage</th><th>Audience here</th><th>Page content serving it</th><th>Mismatch</th><th>Fix</th></tr>
+    <tr><td>Unaware</td><td>Cold scrollers</td><td>None (correct, the page is not for them)</td><td>None on the page</td><td>Reels content feeds this stage. Not the page's job.</td></tr>
+    <tr><td>Problem-aware</td><td>Founders who post inconsistently</td><td>"It was never your ideas. It was the hours." and the 4 pain bullets</td><td>Strong recognition copy, but it sits below the hero, the ticker and the "replaces" list. Cold IG clicks hit mechanism first.</td><td>Move one recognition line into the hero subhead. Re-aim the pain bullets at the rich buyer (see swaps).</td></tr>
+    <tr><td>Solution-aware</td><td>Knows CapCut, editors, AI tools</td><td>"One engine replaces", raw vs finished, 3 styles, works with Claude or ChatGPT</td><td>Best section of the page. Only gap: it never names why this beats an editor or CapCut templates beyond price.</td><td>Add a 3-column compare: Editor / CapCut / Engine on time, cost, consistency, your style.</td></tr>
+    <tr><td>Product-aware</td><td>Warm followers deciding</td><td>Testimonials, founder story, FAQ</td><td><strong>The biggest leak.</strong> Every trust closer is a placeholder or vague: no real proof, no refund policy, no numbers in the story.</td><td>Real DMs with before / mechanism / after. Write a guarantee. Add your own numbers.</td></tr>
+    <tr><td>Most-aware</td><td>Ready to buy</td><td>Pricing card, sticky buy bar</td><td>Friction is total: the button is dead. No urgency, so even ready buyers wait.</td><td>Working checkout, deadline in the buy bar, order bump, result-driven CTA.</td></tr>
+  </table></div>
+
+  <h2>5. Funnel OS: the assets a $111 offer needs</h2>
+  <p>$111 sits in the $97 to $222 tier: checkout, delivery page, post-purchase nurture and abandon cart.</p>
+  <div class="table-wrap"><table>
+    <tr><th>Asset</th><th>Status</th><th>Skill to build it</th></tr>
+    <tr><td>Sales page</td><td>Built, needs fixes above</td><td>this audit</td></tr>
+    <tr><td>Checkout page + order bump</td><td>Missing</td><td><code>low-ticket-checkout-page</code></td></tr>
+    <tr><td>Delivery page + one-time upsell to the $497 install</td><td>Missing</td><td><code>low-ticket-delivery-page</code></td></tr>
+    <tr><td>Post-purchase nurture toward She Who Scales coaching (7 emails)</td><td>Missing</td><td>written from the Funnel OS nurture prompt</td></tr>
+    <tr><td>Abandon cart (Sequence A)</td><td>Missing, also needs email capture</td><td><code>email-bof-abandon-cart</code></td></tr>
+  </table></div>
+  <p><strong>Automations to set:</strong> purchase removes her from all sales emails; cart started with no purchase in 1 hour triggers abandon email 1; purchase starts the nurture.</p>
+
+  <h2>6. Smaller notes</h2>
+  <ul>
+    <li><strong>Check the "it posts for you" claim.</strong> Auto-posting to Instagram usually needs a Business or Creator account and a scheduler connection. Say what is needed in the FAQ so nobody feels misled.</li>
+    <li><strong>Mention the real running cost.</strong> A paid Claude or ChatGPT plan (about $20 a month) is listed, which is good. Say it again in the pricing card so the $111 "once" promise stays honest.</li>
+    <li><strong>"Lifetime updates"</strong> is a long promise for a tool that depends on outside AI platforms. Consider "every update for as long as the engine is sold".</li>
+    <li><strong>Earnings disclaimer</strong> is not needed now. Add one if you add income claims with real user results.</li>
+  </ul>
+
+  <h2>Priority order</h2>
+  <ol>
+    <li>Connect checkout, with email captured first.</li>
+    <li>Remove the demo note, record the demo, add real testimonials, write the refund policy.</li>
+    <li>Add a dated founding deadline and the next price everywhere the price appears.</li>
+    <li>Rewrite the pain section and the math block for the rich buyer.</li>
+    <li>Add the order bump and the $497 done-with-you tier.</li>
+    <li>Build the checkout, delivery page, abandon cart emails and nurture, in that order.</li>
+  </ol>
+  <p class="sig">She Who Scales</p>
+</div>
+</body>
+</html>

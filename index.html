@@ -1,0 +1,921 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>The Reels Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=League+Gothic&family=Jost:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Ms+Madi&display=swap" rel="stylesheet">
+<style>
+/* Layout: fashion-house sales page. Studio-grey stage that matches the photography, towering condensed
+   caps with a handwritten script laid over them, two crossing "tape" ribbons, arched portraits.
+   Radius system: everything sharp, except arched photos and the phone devices. One accent: wine. */
+:root{
+  --stage:#E9E5E0;      /* studio backdrop grey, sampled from the shoot */
+  --stage-2:#DCD6CF;
+  --porcelain:#F6F4F1;
+  --ink:#1A1012;
+  --ink-soft:#5E5153;
+  --wine:#5B0F19;
+  --wine-deep:#23060A;
+  --taupe:#CBC0B2;
+  --line:rgba(26,16,18,.14);
+  --line-light:rgba(246,244,241,.16);
+  --f-display:'League Gothic','Oswald','Arial Narrow',Impact,sans-serif;
+  --f-body:'Jost','Futura','Century Gothic','Helvetica Neue',sans-serif;
+  --f-script:'Ms Madi','Snell Roundhand','Brush Script MT',cursive;
+  --ease:cubic-bezier(.16,1,.3,1);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--stage);color:var(--ink);font:400 17px/1.65 var(--f-body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:90;opacity:.05;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+img{max-width:100%;display:block}
+a{color:inherit}
+p{margin:0}
+h1,h2,h3{margin:0;font-weight:400;text-wrap:balance}
+button{font:inherit;color:inherit}
+.wrap{max-width:1320px;margin:0 auto;padding-inline:clamp(16px,4vw,48px)}
+.display{font-family:var(--f-display);text-transform:uppercase;line-height:.9;letter-spacing:.005em}
+.script{font-family:var(--f-script);font-weight:400;line-height:1;text-transform:none;letter-spacing:0}
+.h2{font-size:clamp(56px,8.4vw,128px)}
+.lede{font-size:clamp(17px,1.4vw,19px);font-weight:300;color:var(--ink-soft);max-width:52ch}
+.label{font-size:12px;font-weight:500;letter-spacing:.32em;text-transform:uppercase}
+
+/* buttons */
+.btn{--bg:var(--wine);--fg:var(--porcelain);position:relative;display:inline-flex;align-items:center;gap:14px;padding:20px 34px;background:var(--bg);color:var(--fg);font:500 13px/1 var(--f-body);letter-spacing:.24em;text-transform:uppercase;text-decoration:none;border:1px solid var(--bg);overflow:hidden;white-space:nowrap;transition:transform .5s var(--ease)}
+.btn::before{content:"";position:absolute;inset:0;background:var(--ink);transform:translateY(101%);transition:transform .6s var(--ease)}
+.btn:hover::before{transform:none}
+.btn>*{position:relative}
+.btn:active{transform:scale(.98)}
+.btn .arr{display:inline-block;width:18px;height:1px;background:currentColor;position:relative;transition:width .5s var(--ease)}
+.btn .arr::after{content:"";position:absolute;right:0;top:-3px;width:7px;height:7px;border-top:1px solid currentColor;border-right:1px solid currentColor;transform:rotate(45deg)}
+.btn:hover .arr{width:30px}
+.btn.line{--bg:transparent;--fg:var(--ink);border-color:var(--ink)}
+.btn.line::before{background:var(--ink)}
+.btn.line:hover{color:var(--porcelain)}
+.btn.light{--bg:var(--porcelain);--fg:var(--wine)}
+.btn.light::before{background:var(--taupe)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--wine);outline-offset:4px}
+.on-dark a:focus-visible,.on-dark button:focus-visible{outline-color:var(--taupe)}
+
+/* reveal */
+.js .rv{opacity:0;transform:translateY(40px);transition:opacity 1.1s var(--ease),transform 1.1s var(--ease);transition-delay:var(--d,0s)}
+.js .rv.in{opacity:1;transform:none}
+
+/* intro curtain */
+.curtain{position:fixed;inset:0;z-index:100;background:var(--wine-deep);display:grid;place-items:center;pointer-events:none}
+.curtain span{font-family:var(--f-script);font-size:clamp(56px,8vw,96px);color:var(--taupe);opacity:0;animation:cIn .9s .1s var(--ease) forwards}
+.js .curtain{animation:cUp 1s 1.05s cubic-bezier(.77,0,.18,1) forwards}
+html:not(.js) .curtain{display:none}
+@keyframes cIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes cUp{to{transform:translateY(-100%)}}
+
+/* top bar + nav */
+.bar{background:var(--wine-deep);color:var(--taupe);text-align:center;font-size:12px;letter-spacing:.24em;text-transform:uppercase;padding:11px 16px}
+.bar b{color:var(--porcelain);font-weight:500}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:60;background:rgba(233,229,224,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+nav .wrap{height:70px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+.mono{width:30px;height:44px;overflow:hidden;flex:none}
+.mono img{width:100%;height:100%;object-fit:cover;mix-blend-mode:multiply;transform:scale(3.2);transform-origin:50% 38%}
+.brand b{font:500 12px/1 var(--f-body);letter-spacing:.36em;color:var(--wine);white-space:nowrap}
+.links{display:flex;gap:34px;list-style:none;margin:0;padding:0}
+.links a{font-size:13px;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;position:relative}
+.links a::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:1px;background:var(--wine);transform:scaleX(0);transform-origin:right;transition:transform .5s var(--ease)}
+.links a:hover::after{transform:scaleX(1);transform-origin:left}
+nav .btn{padding:14px 22px;font-size:11px}
+
+/* hero */
+.hero{position:relative;overflow:hidden;padding-top:clamp(28px,4vw,56px)}
+.hero-grid{display:grid;grid-template-columns:1.35fr .65fr;gap:clamp(24px,4vw,56px);align-items:end;position:relative}
+.hero-copy{padding-bottom:clamp(130px,12vw,180px);position:relative;z-index:3}
+.hero h1{font-size:clamp(64px,8.2vw,150px);color:var(--ink);position:relative}
+.hero h1 .ln{display:block;overflow:hidden;padding-bottom:.02em;white-space:nowrap}
+.hero h1 .ln>span{display:block}
+.js .hero h1 .ln>span{transform:translateY(105%);animation:rise 1.2s var(--ease) forwards}
+.js .hero h1 .ln:nth-child(2)>span{animation-delay:1.32s}
+.js .hero h1 .ln:nth-child(1)>span{animation-delay:1.2s}
+.hero h1 .ln:nth-child(2){color:var(--wine)}
+.hero h1 .script{position:absolute;left:38%;bottom:-.5em;font-size:.5em;color:var(--ink);transform:rotate(-7deg);white-space:nowrap}
+.js .hero h1 .script{opacity:0;animation:fade 1s 1.75s var(--ease) forwards}
+@keyframes rise{to{transform:none}}
+@keyframes fade{from{opacity:0;transform:rotate(-7deg) translateY(10px)}to{opacity:1;transform:rotate(-7deg)}}
+.hero .lede{margin-top:clamp(36px,4vw,52px);max-width:40ch;color:var(--ink-soft)}
+.hero .btns{display:flex;flex-wrap:wrap;gap:14px;margin-top:32px}
+.js .hero .lede,.js .hero .btns{opacity:0;animation:up 1s 1.6s var(--ease) forwards}
+.js .hero .btns{animation-delay:1.72s}
+@keyframes up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+
+.stage{position:relative;align-self:stretch;min-height:600px;z-index:2}
+.arch{position:absolute;right:0;bottom:0;width:min(100%,460px);height:94%;border-radius:999px 999px 0 0;overflow:hidden;background:var(--stage-2)}
+.arch img{width:100%;height:100%;object-fit:cover;object-position:50% 18%;transform:scale(1.08)}
+.js .arch img{animation:settle 2.2s 1.05s var(--ease) both}
+@keyframes settle{from{transform:scale(1.22)}to{transform:scale(1.08)}}
+.stage .phone{position:absolute;left:-70px;bottom:118px;width:190px;z-index:3;transform:rotate(-4deg)}
+.js .stage .phone{opacity:0;animation:pop 1.1s 1.9s var(--ease) forwards}
+@keyframes pop{from{opacity:0;transform:rotate(-4deg) translateY(40px)}to{opacity:1;transform:rotate(-4deg)}}
+.chip-card{position:absolute;right:-8px;top:22%;z-index:3;background:var(--porcelain);padding:16px 18px 14px;box-shadow:0 24px 50px -20px rgba(35,6,10,.4);min-width:190px}
+.chip-card .label{font-size:10px;color:var(--wine)}
+.chip-card strong{display:block;font:400 44px/1 var(--f-display);margin-top:6px}
+.chip-card small{font-size:12px;color:var(--ink-soft)}
+.js .chip-card{opacity:0;animation:up 1s 2.1s var(--ease) forwards}
+
+/* phone device */
+.phone{aspect-ratio:9/19;border-radius:34px;background:var(--ink);padding:7px;box-shadow:0 40px 70px -30px rgba(35,6,10,.55)}
+.screen{position:relative;width:100%;height:100%;border-radius:28px;overflow:hidden;background:#2b2224}
+.screen img{width:100%;height:100%;object-fit:cover;object-position:50% 22%}
+.kb img{animation:kb 14s ease-in-out infinite alternate}
+@keyframes kb{from{transform:scale(1.05)}to{transform:scale(1.18) translateY(-3%)}}
+.screen .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35),transparent 30%,transparent 55%,rgba(0,0,0,.55))}
+.prog{position:absolute;top:12px;left:12px;right:12px;height:2px;background:rgba(255,255,255,.3);overflow:hidden;border-radius:2px}
+.prog i{display:block;height:100%;width:100%;background:#fff;transform-origin:left;animation:prog 6s linear infinite}
+@keyframes prog{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.r-hook{position:absolute;top:13%;left:10%;right:10%;text-align:center;color:#fff;font:400 26px/1 var(--f-display);text-transform:uppercase;letter-spacing:.01em}
+.r-cap{position:absolute;left:8%;right:8%;bottom:17%;text-align:center;font:600 14px/1.35 var(--f-body);color:rgba(255,255,255,.55)}
+.r-cap span{transition:color .2s}
+.r-cap span.on{color:#fff}
+.r-cap span.on.key{color:#fff;background:var(--wine);padding:0 4px}
+
+/* ribbons */
+.ribbons{position:relative;height:150px;margin-top:-150px;z-index:4;pointer-events:none}
+.ribbon{position:absolute;left:-5%;right:-5%;overflow:hidden;padding-block:12px;border-block:1px solid rgba(246,244,241,.25)}
+.ribbon.a{background:var(--wine);color:var(--porcelain);top:44px;transform:rotate(-3deg)}
+.ribbon.b{background:var(--porcelain);color:var(--wine);top:58px;transform:rotate(2.2deg);border-color:var(--line)}
+.track{display:flex;width:max-content;animation:tape 46s linear infinite}
+.ribbon.b .track{animation-direction:reverse;animation-duration:54s}
+.track span{font:400 22px/1 var(--f-display);letter-spacing:.14em;text-transform:uppercase;white-space:nowrap;padding-right:26px}
+.track span::after{content:"\2726";padding-left:26px;font-size:14px;vertical-align:3px}
+@keyframes tape{to{transform:translateX(-50%)}}
+
+/* replaces */
+.replaces{padding-block:clamp(90px,11vw,150px) clamp(70px,8vw,110px)}
+.replaces .script{font-size:clamp(44px,5vw,64px);color:var(--wine);display:block;margin-bottom:10px}
+.rep-list{display:flex;flex-wrap:wrap;gap:6px clamp(20px,3vw,44px);list-style:none;margin:0;padding:0}
+.rep-list li{font:400 clamp(40px,6.2vw,92px)/1 var(--f-display);text-transform:uppercase;position:relative;color:var(--ink);transition:color .8s var(--ease) var(--d,0s)}
+.rep-list li::after{content:"";position:absolute;left:-2%;right:-2%;top:52%;height:.07em;background:var(--wine);transform:scaleX(0);transform-origin:left;transition:transform .9s var(--ease) var(--d,0s)}
+.rep-list.in li{color:rgba(26,16,18,.28)}
+.rep-list.in li::after{transform:scaleX(1)}
+.rep-foot{margin-top:clamp(36px,4vw,56px);display:flex;flex-wrap:wrap;align-items:baseline;gap:12px 28px}
+.rep-foot strong{font:400 clamp(40px,4.4vw,64px)/1 var(--f-display);text-transform:uppercase;color:var(--wine)}
+
+/* dark chapter */
+.on-dark{background:var(--wine-deep);color:var(--porcelain)}
+.on-dark .lede{color:rgba(246,244,241,.72)}
+.chapter{padding-block:clamp(90px,11vw,150px)}
+.demo-head{display:grid;gap:22px;margin-bottom:clamp(48px,6vw,80px);max-width:900px}
+.demo-head .h2 .script{color:var(--taupe);font-size:.62em;display:inline-block;transform:rotate(-4deg) translateY(-.08em);margin-left:.08em}
+.demo-grid{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:clamp(36px,6vw,96px);align-items:start}
+.toggle{display:inline-grid;grid-template-columns:1fr 1fr;border:1px solid var(--line-light);margin-bottom:20px;position:relative;width:100%}
+.toggle button{background:none;border:0;padding:13px 10px;font-size:12px;letter-spacing:.24em;text-transform:uppercase;cursor:pointer;position:relative;z-index:1;color:rgba(246,244,241,.6);transition:color .4s}
+.toggle button[aria-pressed="true"]{color:var(--wine-deep)}
+.toggle i{position:absolute;top:0;bottom:0;left:0;width:50%;background:var(--porcelain);transition:transform .6s var(--ease)}
+.toggle[data-v="done"] i{transform:translateX(100%)}
+.rf .phone{width:100%;max-width:300px}
+.rf .screen img{transition:filter .9s var(--ease),transform 1.2s var(--ease)}
+.rf[data-v="raw"] .screen img{filter:grayscale(.6) brightness(.82) contrast(.9);transform:scale(1)}
+.rf[data-v="done"] .screen img{filter:contrast(1.06) saturate(1.05);transform:scale(1.12)}
+.rf .layer{position:absolute;inset:0;transition:opacity .6s var(--ease)}
+.rf[data-v="raw"] .done-l,.rf[data-v="done"] .raw-l{opacity:0}
+.raw-l .tc{position:absolute;top:14px;left:14px;font:500 11px/1 ui-monospace,Menlo,monospace;color:#fff;background:rgba(0,0,0,.45);padding:6px 8px;letter-spacing:.06em}
+.raw-l .sub{position:absolute;left:10%;right:10%;bottom:12%;text-align:center;font:400 13px/1.4 ui-monospace,Menlo,monospace;color:rgba(255,255,255,.85);background:rgba(0,0,0,.4);padding:6px}
+.done-l .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(35,6,10,.55),transparent 34%,transparent 55%,rgba(35,6,10,.75))}
+.done-l .r-hook{font-size:32px}
+.done-l .r-cap{color:#fff;font-size:16px}
+.done-l .r-cap em{font-style:normal;background:var(--wine);padding:1px 6px}
+.done-l .ready{position:absolute;top:14px;right:14px;font:500 10px/1 var(--f-body);letter-spacing:.2em;text-transform:uppercase;background:var(--porcelain);color:var(--wine);padding:7px 9px}
+.rf-note{margin-top:16px;font-size:13px;color:rgba(246,244,241,.55)}
+.film{display:grid;gap:30px;min-width:0}
+.cinema{position:relative;aspect-ratio:16/9;width:100%;background:radial-gradient(120% 90% at 30% 20%,#4a0f18 0%,#23060A 60%);overflow:hidden;display:grid;place-items:center;border:1px solid var(--line-light);cursor:pointer}
+.cinema img{position:absolute;right:0;top:0;height:100%;width:46%;object-fit:cover;object-position:50% 20%;opacity:.55;mask-image:linear-gradient(90deg,transparent,#000 50%);-webkit-mask-image:linear-gradient(90deg,transparent,#000 50%)}
+.cinema .pb{position:relative;width:96px;height:96px;border-radius:50%;background:var(--porcelain);display:grid;place-items:center;transition:transform .6s var(--ease)}
+.cinema:hover .pb{transform:scale(1.08)}
+.cinema .pb::before{content:"";border-left:20px solid var(--wine);border-top:12px solid transparent;border-bottom:12px solid transparent;margin-left:6px}
+.cinema .pb::after{content:"";position:absolute;inset:-14px;border-radius:50%;border:1px solid rgba(246,244,241,.35);animation:ring 2.6s var(--ease) infinite}
+@keyframes ring{from{transform:scale(.8);opacity:1}to{transform:scale(1.35);opacity:0}}
+.cinema .cap{position:absolute;left:28px;bottom:24px;text-align:left}
+.cinema .cap .script{font-size:44px;color:var(--taupe)}
+.cinema .cap small{display:block;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:rgba(246,244,241,.6);margin-top:4px}
+.chapters{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--line-light)}
+.chapters li{padding:20px 18px 0 0;display:grid;gap:6px;font-size:15px;color:rgba(246,244,241,.78)}
+.chapters b{font:400 30px/1 var(--f-display);color:var(--taupe);font-variant-numeric:tabular-nums;letter-spacing:.04em}
+.edit-note{font-size:13px;color:var(--taupe);border:1px dashed rgba(203,192,178,.4);padding:14px 16px}
+
+/* pain */
+.pain{padding-block:clamp(100px,12vw,170px)}
+.pain-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(40px,6vw,100px);align-items:start}
+.pain-head{position:sticky;top:130px}
+.pain-head .h2 em{font-style:normal;color:var(--wine)}
+.pain-list{display:grid;gap:clamp(56px,7vw,96px);padding-top:12px}
+.pain-item p{font:300 clamp(26px,2.6vw,38px)/1.25 var(--f-body);letter-spacing:-.01em}
+.pain-item p b{font-weight:500;color:var(--wine)}
+.pain-item .script{font-size:34px;color:var(--ink-soft);display:block;margin-top:14px}
+
+/* math */
+.math{background:var(--porcelain);padding-block:clamp(90px,11vw,150px);text-align:center;overflow:hidden}
+.math .label{color:var(--wine)}
+.big{font:400 clamp(110px,22vw,330px)/.82 var(--f-display);margin-block:22px 10px;font-variant-numeric:tabular-nums;position:relative;display:inline-block}
+.big.old{color:rgba(26,16,18,.22)}
+.big.old::after{content:"";position:absolute;left:-3%;right:-3%;top:50%;height:.045em;background:var(--wine);transform:scaleX(0) rotate(-4deg);transform-origin:left;transition:transform 1.1s .9s var(--ease)}
+.math.in .big.old::after{transform:scaleX(1) rotate(-4deg)}
+.big.new{color:var(--wine)}
+.math .or{font-size:clamp(56px,6vw,84px);color:var(--ink);display:block;margin-block:-.1em -.2em}
+.math p.m{max-width:44ch;margin:0 auto;color:var(--ink-soft);font-weight:300}
+
+/* steps: sticky stack */
+.steps-sec{padding-block:clamp(100px,12vw,160px) 40px}
+.steps-head{display:grid;gap:18px;margin-bottom:clamp(48px,6vw,80px)}
+.stack{display:grid;gap:28px}
+.card{position:sticky;top:calc(100px + var(--i) * 22px);min-height:min(78vh,620px);display:grid;grid-template-columns:1fr 1fr;overflow:hidden;box-shadow:0 -24px 60px -40px rgba(35,6,10,.45)}
+.card .txt{padding:clamp(28px,4vw,60px);display:flex;flex-direction:column;justify-content:space-between;gap:28px}
+.card .verb{font-size:clamp(96px,12vw,190px)}
+.card .script{font-size:clamp(38px,3.6vw,52px);display:block;margin-top:-6px}
+.card p{font-size:17px;font-weight:300;max-width:36ch}
+.card .ph{position:relative;overflow:hidden}
+.card .ph img{width:100%;height:100%;object-fit:cover}
+.c1{background:var(--porcelain)}
+.c1 .script{color:var(--wine)}
+.c2{background:var(--wine);color:var(--porcelain)}
+.c2 .script{color:var(--taupe)}
+.c3{background:var(--stage-2)}
+.c3 .script{color:var(--wine)}
+.c4{background:var(--ink);color:var(--porcelain)}
+.c4 .script{color:var(--taupe)}
+.folder{position:absolute;inset:0;display:grid;place-items:center;background:var(--wine-deep)}
+.files{display:grid;gap:10px;width:min(78%,340px)}
+.file{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px;background:rgba(246,244,241,.06);border:1px solid var(--line-light);font:400 14px/1 var(--f-body);color:var(--porcelain)}
+.file small{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--taupe)}
+.js .card.in .file{animation:up .8s var(--ease) both}
+.card .file:nth-child(2){animation-delay:.12s}.card .file:nth-child(3){animation-delay:.24s}.card .file:nth-child(4){animation-delay:.36s}
+.sched{position:absolute;inset:0;background:#120709;display:grid;place-items:center;padding:24px}
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;width:min(100%,460px)}
+.day{display:grid;gap:8px;text-align:center}
+.day small{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--taupe)}
+.day i{display:block;aspect-ratio:9/16;background-size:cover;background-position:50% 25%;border:1px solid var(--line-light);position:relative}
+.day i::after{content:"7pm";position:absolute;bottom:4px;left:0;right:0;font:500 9px/1 var(--f-body);letter-spacing:.1em;color:#fff}
+
+/* styles */
+.styles{padding-block:clamp(100px,12vw,160px)}
+.styles-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,360px);gap:clamp(40px,7vw,120px);align-items:center}
+.styles .h2 .script{color:var(--wine);font-size:.6em;display:block;transform:rotate(-3deg);margin-top:-.05em}
+.paste{display:flex;align-items:center;gap:12px;margin-top:36px;border-bottom:1px solid var(--ink);padding-block:14px;max-width:520px}
+.paste span{font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--wine);white-space:nowrap}
+.paste output{font-size:16px;color:var(--ink-soft);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;min-width:0}
+.paste output::after{content:"";display:inline-block;width:1px;height:1em;background:var(--ink);vertical-align:-2px;margin-left:2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.looks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin-top:30px;border:1px solid var(--line)}
+.look{background:none;border:0;border-right:1px solid var(--line);padding:18px 10px;cursor:pointer;display:grid;gap:6px;text-align:left;transition:background .4s,color .4s}
+.look:last-child{border-right:0}
+.look b{font:400 24px/1 var(--f-display);text-transform:uppercase;letter-spacing:.02em}
+.look small{font-size:12px;color:var(--ink-soft);line-height:1.35}
+.look[aria-pressed="true"]{background:var(--ink);color:var(--porcelain)}
+.look[aria-pressed="true"] small{color:var(--taupe)}
+.kit{display:flex;flex-wrap:wrap;align-items:center;gap:14px 26px;margin-top:28px}
+.kit .label{font-size:11px;color:var(--ink-soft)}
+.sw{display:flex;gap:10px}
+.sw button{width:30px;height:30px;border-radius:50%;border:1px solid var(--line);cursor:pointer;background:var(--c);position:relative}
+.sw button[aria-pressed="true"]::after{content:"";position:absolute;inset:-5px;border:1px solid var(--ink);border-radius:50%}
+.sp{justify-self:center;width:100%;max-width:330px}
+.sp .screen img{transition:filter .6s}
+.sp .ov{position:absolute;inset:0;transition:background .6s}
+.sp .hk,.sp .cp{position:absolute;left:9%;right:9%;text-align:center;transition:opacity .35s}
+.sp .hk{top:14%}.sp .cp{bottom:15%}
+.sp.swap .hk,.sp.swap .cp{opacity:0}
+.sp[data-s="luxe"] img{filter:contrast(1.05) saturate(.9)}
+.sp[data-s="luxe"] .ov{background:linear-gradient(180deg,rgba(35,6,10,.55),transparent 38%,transparent 58%,rgba(35,6,10,.75))}
+.sp[data-s="luxe"] .hk{font:400 36px/.95 var(--f-display);text-transform:uppercase;color:#F6F4F1}
+.sp[data-s="luxe"] .cp{font:400 34px/1 var(--f-script);color:var(--acc)}
+.sp[data-s="loud"] img{filter:contrast(1.2) saturate(1.15)}
+.sp[data-s="loud"] .ov{background:rgba(0,0,0,.12)}
+.sp[data-s="loud"] .hk{font:600 26px/1.05 var(--f-body);text-transform:uppercase;color:#fff;letter-spacing:-.01em}
+.sp[data-s="loud"] .hk em{font-style:normal;background:var(--acc);padding:0 6px}
+.sp[data-s="loud"] .cp{font:600 19px/1.1 var(--f-body);color:#111;background:#fff;padding:7px 10px;left:50%;right:auto;transform:translateX(-50%);white-space:nowrap}
+.sp[data-s="soft"] img{filter:brightness(1.1) saturate(.55) sepia(.12)}
+.sp[data-s="soft"] .ov{background:rgba(246,244,241,.18)}
+.sp[data-s="soft"] .hk{font:300 15px/1.5 var(--f-body);letter-spacing:.3em;text-transform:uppercase;color:#1A1012;background:rgba(246,244,241,.86);padding:12px}
+.sp[data-s="soft"] .cp{font:italic 300 18px/1.35 var(--f-body);color:#1A1012;background:rgba(246,244,241,.86);padding:9px}
+.sp[data-s="mono"] img{filter:grayscale(1) contrast(1.15)}
+.sp[data-s="mono"] .ov{background:linear-gradient(0deg,rgba(0,0,0,.6),transparent 50%)}
+.sp[data-s="mono"] .hk{font:400 54px/.85 var(--f-display);text-transform:uppercase;color:#fff;text-align:left}
+.sp[data-s="mono"] .cp{font:500 12px/1.4 var(--f-body);letter-spacing:.3em;text-transform:uppercase;color:var(--acc);text-align:left;filter:brightness(1.6)}
+
+
+/* real style gallery */
+.styles-top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(30px,6vw,96px);align-items:end;margin-bottom:clamp(40px,5vw,64px)}
+.styles .h2 .script{color:var(--wine);font-size:.6em;display:block;transform:rotate(-3deg);margin-top:-.05em}
+.gtabs{display:inline-grid;grid-template-columns:1fr 1fr;border:1px solid var(--ink);margin-bottom:34px}
+.gtabs button{background:none;border:0;padding:14px 26px;cursor:pointer;text-align:left;font:400 24px/1 var(--f-display);text-transform:uppercase;letter-spacing:.03em;transition:background .4s,color .4s}
+.gtabs button small{display:block;font:400 12px/1.4 var(--f-body);letter-spacing:.08em;text-transform:none;color:var(--ink-soft);margin-top:4px}
+.gtabs button[aria-selected="true"]{background:var(--ink);color:var(--porcelain)}
+.gtabs button[aria-selected="true"] small{color:var(--taupe)}
+.gset{display:grid;grid-template-columns:minmax(0,1fr) auto repeat(3,minmax(0,1fr));gap:clamp(14px,2vw,28px);align-items:start}
+.gset[hidden]{display:none!important}
+.gset.enter .g-item{animation:up .9s var(--ease) both}
+.gset.enter .g-item:nth-of-type(2){animation-delay:.08s}.gset.enter .g-item:nth-of-type(3){animation-delay:.16s}.gset.enter .g-item:nth-of-type(4){animation-delay:.24s}
+.g-item{margin:0;display:grid;gap:16px}
+.phone.v{aspect-ratio:9/17;border-radius:26px;padding:6px}
+.phone.v .screen{border-radius:21px}
+.screen video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.g-item figcaption b{display:block;font:400 30px/1 var(--f-display);text-transform:uppercase;letter-spacing:.02em}
+.g-item figcaption span{display:block;font-size:14px;color:var(--ink-soft);margin-top:6px;line-height:1.45}
+.g-raw .phone{background:var(--stage-2);box-shadow:none;border:1px dashed rgba(26,16,18,.35)}
+.g-raw figcaption b{color:var(--ink-soft)}
+.becomes{align-self:center;font-size:40px;color:var(--wine);writing-mode:vertical-rl;transform:rotate(180deg);margin-top:-60px}
+.g-note{margin-top:30px;font-size:13px;color:var(--ink-soft)}
+.rf .screen video{transition:opacity .6s var(--ease)}
+.rf .tag{position:absolute;top:14px;left:14px;font:500 10px/1 var(--f-body);letter-spacing:.2em;text-transform:uppercase;padding:7px 9px;transition:opacity .5s}
+.rf .tag.raw-l{background:rgba(0,0,0,.5);color:#fff}
+.rf .tag.done-l{background:var(--porcelain);color:var(--wine)}
+@media (max-width:1080px){
+  .styles-top{grid-template-columns:1fr}
+  .gset{grid-template-columns:repeat(4,minmax(220px,1fr));overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:14px}
+  .g-item{scroll-snap-align:start}
+  .becomes{display:none}
+}
+@media (max-width:720px){.gset{grid-template-columns:repeat(4,minmax(200px,72vw))}.gtabs button{padding:12px 16px;font-size:20px}}
+
+/* chat */
+.talk{background:var(--porcelain);padding-block:clamp(100px,12vw,160px)}
+.talk-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(40px,7vw,110px);align-items:center}
+.talk .h2 em{font-style:normal;color:var(--wine)}
+.works{margin-top:36px;display:grid;gap:14px}
+.works .label{font-size:11px;color:var(--ink-soft)}
+.ai{display:flex;gap:28px;align-items:center}
+.ai span{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:500}
+.ai img{width:24px;height:24px}
+.needs{margin-top:30px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;border-top:1px solid var(--line);padding-top:22px}
+.needs b{display:block;font:400 26px/1 var(--f-display);text-transform:uppercase;letter-spacing:.02em}
+.needs small{font-size:13px;color:var(--ink-soft);line-height:1.4;display:block;margin-top:6px}
+.chat{background:var(--stage);padding:clamp(20px,3vw,34px);display:grid;gap:14px;min-height:500px;align-content:start;border:1px solid var(--line)}
+.chat-top{display:flex;justify-content:space-between;align-items:center;padding-bottom:14px;border-bottom:1px solid var(--line);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-soft)}
+.chat-top b{color:var(--wine);font-weight:500}
+.msg{max-width:84%;padding:14px 18px;font-size:15.5px;line-height:1.5;opacity:0;transform:translateY(12px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.msg.show{opacity:1;transform:none}
+.msg.me{justify-self:end;background:var(--wine);color:var(--porcelain)}
+.msg.bot{justify-self:start;background:var(--porcelain);border:1px solid var(--line)}
+.msg.bot small{display:block;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--wine);margin-bottom:4px}
+.typing{justify-self:start;display:none;gap:5px;padding:16px 18px;background:var(--porcelain);border:1px solid var(--line)}
+.typing.show{display:flex}
+.typing i{width:6px;height:6px;border-radius:50%;background:var(--ink-soft);animation:dot 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes dot{0%,100%{opacity:.25}50%{opacity:1}}
+html:not(.js) .msg{opacity:1;transform:none}
+
+/* bento */
+.inside{padding-block:clamp(100px,12vw,160px)}
+.inside-head{margin-bottom:clamp(44px,5vw,70px);display:grid;gap:16px}
+.inside-head .h2 .script{color:var(--wine);font-size:.6em;display:inline-block;transform:rotate(-4deg);margin-left:.1em}
+.bento{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:minmax(230px,auto);gap:14px}
+.cell{padding:clamp(22px,2.4vw,32px);display:flex;flex-direction:column;justify-content:flex-end;gap:8px;position:relative;overflow:hidden;background:var(--porcelain);transition:transform .7s var(--ease)}
+.cell:hover{transform:translateY(-4px)}
+.cell h3{font:400 clamp(30px,2.8vw,40px)/.95 var(--f-display);text-transform:uppercase;letter-spacing:.01em}
+.cell p{font-size:15px;color:var(--ink-soft);font-weight:300;max-width:34ch}
+.cell.img{grid-row:span 2;padding:0;justify-content:flex-end;color:var(--porcelain)}
+.cell.img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 30%;transition:transform 1.4s var(--ease)}
+.cell.img:hover img{transform:scale(1.05)}
+.cell.img .in-t{position:relative;padding:clamp(22px,2.4vw,32px);background:linear-gradient(0deg,rgba(26,16,18,.85),transparent);display:grid;gap:8px}
+.cell.img p{color:rgba(246,244,241,.82)}
+.cell.wide{grid-column:span 2}
+.cell.wine{background:var(--wine);color:var(--porcelain)}
+.cell.wine p{color:rgba(246,244,241,.75)}
+.cell.ink{background:var(--ink);color:var(--porcelain)}
+.cell.ink p{color:rgba(246,244,241,.7)}
+.cell .script{font-size:52px;color:var(--wine);position:absolute;top:18px;right:22px}
+.cell.wine .script,.cell.ink .script{color:var(--taupe)}
+.caps-demo{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:auto}
+.caps-demo span{font:500 12px/1 var(--f-body);padding:8px 10px;border:1px solid var(--line-light)}
+.caps-demo span:nth-child(2){background:var(--porcelain);color:var(--wine)}
+.caps-demo span:nth-child(3){font:400 18px/1 var(--f-display);letter-spacing:.04em;text-transform:uppercase}
+
+/* proof */
+.proof{padding-block:clamp(90px,10vw,140px);background:var(--stage-2);overflow:hidden}
+.proof-head{display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap;margin-bottom:44px}
+.proof .h2 .script{color:var(--wine);font-size:.6em;display:inline-block;transform:rotate(-4deg)}
+.rail{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(280px,360px);gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:18px;scrollbar-width:thin}
+.dm{scroll-snap-align:start;background:var(--porcelain);padding:26px;display:grid;gap:18px;align-content:start;border:1px dashed rgba(91,15,25,.45)}
+.dm .who{display:flex;align-items:center;gap:12px}
+.dm .av{width:38px;height:38px;border-radius:50%;background:var(--stage-2);border:1px dashed rgba(91,15,25,.45)}
+.dm .who b{font-size:14px;font-weight:500;display:block}
+.dm .who small{font-size:12px;color:var(--ink-soft)}
+.dm .bub{background:var(--stage);padding:14px 16px;font-size:15px;line-height:1.5;color:var(--ink-soft);border-radius:18px 18px 18px 4px}
+.rail-hint{font-size:13px;color:var(--ink-soft)}
+
+/* founder */
+.founder{padding-block:clamp(100px,12vw,160px)}
+.f-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:clamp(40px,7vw,110px);align-items:center}
+.f-arch{border-radius:999px 999px 0 0;overflow:hidden;aspect-ratio:3/4;background:var(--stage-2)}
+.f-arch img{width:100%;height:100%;object-fit:cover;object-position:50% 20%}
+.f-copy{display:grid;gap:22px}
+.f-copy .h2 em{font-style:normal;color:var(--taupe)}
+.f-copy p{font-size:18px;font-weight:300;color:rgba(246,244,241,.8);max-width:54ch}
+.f-copy p.pull{font-size:clamp(24px,2.4vw,32px);line-height:1.3;color:var(--porcelain);font-weight:300}
+.sig{font-size:clamp(64px,7vw,96px);color:var(--taupe);margin-top:4px}
+
+/* pricing */
+.pricing{padding-block:clamp(100px,12vw,170px)}
+.p-wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,520px);gap:clamp(40px,7vw,110px);align-items:center}
+.p-wrap .h2 .script{color:var(--wine);font-size:.58em;display:block;transform:rotate(-3deg)}
+.ticket{background:var(--wine);color:var(--porcelain);padding:clamp(30px,4vw,52px);position:relative;box-shadow:0 50px 90px -50px rgba(35,6,10,.7)}
+.ticket::before{content:"";position:absolute;inset:10px;border:1px solid rgba(203,192,178,.35);pointer-events:none}
+.ticket .label{color:var(--taupe);font-size:11px}
+.price{display:flex;align-items:flex-start;gap:6px;font:400 clamp(130px,14vw,190px)/.8 var(--f-display);margin-block:22px 8px}
+.price sup{font-size:.3em;line-height:1;margin-top:.15em}
+.ticket .once{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--taupe)}
+.incl{list-style:none;margin:30px 0 34px;padding:22px 0 0;border-top:1px solid var(--line-light);display:grid;gap:12px}
+.incl li{display:grid;grid-template-columns:18px 1fr;gap:12px;font-size:15.5px;font-weight:300}
+.incl li::before{content:"";width:9px;height:9px;margin-top:.55em;border:1px solid var(--taupe);transform:rotate(45deg)}
+.ticket .btn{width:100%;justify-content:center}
+.ticket small.fine{display:block;text-align:center;margin-top:16px;font-size:12px;color:rgba(246,244,241,.55)}
+
+/* faq */
+.faq-sec{padding-block:clamp(90px,11vw,150px);background:var(--porcelain)}
+.faq-grid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(40px,7vw,110px);align-items:start}
+.faq-grid .h2{position:sticky;top:120px}
+.faq-grid .h2 .script{color:var(--wine);font-size:.58em;display:block;transform:rotate(-3deg)}
+.qa{border-top:1px solid var(--line)}
+.qa:last-child{border-bottom:1px solid var(--line)}
+.qa button{width:100%;background:none;border:0;text-align:left;cursor:pointer;display:flex;justify-content:space-between;gap:24px;align-items:center;padding:26px 0;font:400 clamp(19px,1.6vw,22px)/1.3 var(--f-body)}
+.qa button i{flex:none;width:16px;height:16px;position:relative}
+.qa button i::before,.qa button i::after{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:var(--wine);transition:transform .5s var(--ease)}
+.qa button i::after{transform:rotate(90deg)}
+.qa button[aria-expanded="true"] i::after{transform:rotate(0)}
+.qa .a{display:grid;grid-template-rows:0fr;transition:grid-template-rows .6s var(--ease)}
+.qa .a>div{overflow:hidden}
+.qa .a p{padding-bottom:26px;color:var(--ink-soft);font-weight:300;max-width:60ch}
+.qa button[aria-expanded="true"]+.a{grid-template-rows:1fr}
+
+/* final */
+.final{padding-block:clamp(90px,10vw,140px) 0;overflow:hidden;text-align:center}
+.final p.lede{margin:0 auto 34px;color:rgba(246,244,241,.72)}
+.final .script{font-size:clamp(48px,5vw,72px);color:var(--taupe);display:block;margin-bottom:8px}
+.wordmark{font:400 clamp(90px,19.5vw,300px)/.78 var(--f-display);text-transform:uppercase;color:var(--wine);margin-top:clamp(70px,8vw,110px);white-space:nowrap;letter-spacing:-.005em;transform:translateY(.12em)}
+footer{background:var(--wine-deep);color:rgba(246,244,241,.55);font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;padding-block:26px;border-top:1px solid var(--line-light)}
+
+/* mobile buy bar */
+.buybar{position:fixed;left:0;right:0;bottom:0;z-index:70;background:var(--wine-deep);color:var(--porcelain);padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));display:none;align-items:center;justify-content:space-between;gap:12px;transform:translateY(110%);transition:transform .6s var(--ease)}
+.buybar.show{transform:none}
+.buybar b{font:400 30px/1 var(--f-display)}
+.buybar small{display:block;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--taupe)}
+.buybar .btn{padding:15px 20px;font-size:11px}
+
+/* responsive */
+@media (max-width:1080px){
+  .links{display:none}
+  .hero-grid{grid-template-columns:1fr}
+  .hero-copy{padding-bottom:0}
+  .stage{min-height:560px;max-width:560px;width:100%;margin:28px auto 0}
+  .arch{left:12%;right:0;width:auto}
+  .ribbons{margin-top:-110px}
+  .demo-grid,.pain-grid,.styles-grid,.talk-grid,.f-grid,.p-wrap,.faq-grid{grid-template-columns:1fr}
+  .pain-head,.faq-grid .h2{position:static}
+  .rf{max-width:300px}
+  .bento{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .f-arch{max-width:460px}
+}
+@media (max-width:720px){
+  body{font-size:16px}
+  .bar{font-size:10px;letter-spacing:.16em}
+  .brand b{display:none}
+  .stage{min-height:480px}
+  .stage .phone{width:150px;bottom:90px}
+  .chip-card{top:10%;right:0;min-width:0}
+  .chip-card strong{font-size:34px}
+  .ribbons{height:120px;margin-top:-90px}
+  .track span{font-size:18px}
+  .chapters{grid-template-columns:1fr 1fr;row-gap:18px}
+  .card{grid-template-columns:1fr;min-height:0;top:calc(84px + var(--i) * 14px)}
+  .card .ph{height:300px}
+  .looks{grid-template-columns:1fr 1fr}
+  .look:nth-child(2){border-right:0}
+  .look:nth-child(-n+2){border-bottom:1px solid var(--line)}
+  .needs{grid-template-columns:1fr}
+  .bento{grid-template-columns:1fr}
+  .cell.wide{grid-column:auto}
+  .cell.img{grid-row:auto;min-height:420px}
+  .buybar{display:flex}
+  .hero h1 .script{bottom:-.38em}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .js .rv,.js .hero h1 .ln>span,.js .hero h1 .script,.js .hero .lede,.js .hero .btns,.js .stage .phone,.js .chip-card{opacity:1!important;transform:none!important}
+  .js .stage .phone{transform:rotate(-4deg)!important}
+  .js .hero h1 .script{transform:rotate(-7deg)!important}
+  .curtain{display:none}
+  .msg{opacity:1;transform:none}
+}
+</style>
+<script>document.documentElement.classList.add('js')</script>
+
+<div class="curtain" aria-hidden="true"><span>she who scales</span></div>
+
+<div class="bar">Founding release <b>$111</b> one payment, lifetime updates</div>
+
+<nav aria-label="Main">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="She Who Scales home"><span class="mono"><img src="assets/logo.png" alt=""></span><b>SHE WHO SCALES</b></a>
+    <ul class="links">
+      <li><a href="#demo">Demo</a></li>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#styles">Styles</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <a class="btn" href="#pricing"><span>Get the Engine</span></a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <h1 class="display"><span class="ln"><span>Record once.</span></span><span class="ln"><span>Post all week.</span></span><span class="script">in your style</span></h1>
+      <p class="lede">Drop raw footage in a folder, even from your phone. It edits, captions, schedules and posts for you.</p>
+      <div class="btns">
+        <a class="btn" href="#pricing"><span>Get the Engine</span><span class="arr"></span></a>
+        <a class="btn line" href="#demo"><span>Watch the demo</span></a>
+      </div>
+    </div>
+    <div class="stage" aria-hidden="true">
+      <div class="arch"><img src="assets/cta.jpg" alt=""></div>
+      <div class="phone"><div class="screen">
+        <video class="" src="assets/reels/a-cards.mp4" poster="assets/reels/a-cards.jpg" muted loop playsinline autoplay preload="metadata"></video>
+        <div class="prog"><i></i></div>
+      </div></div>
+      <div class="chip-card"><span class="label">This week</span><strong>7 reels</strong><small>edited, captioned, scheduled</small></div>
+    </div>
+  </div>
+  <div class="ribbons" aria-hidden="true">
+    <div class="ribbon a"><div class="track"><span>The Reels Engine</span><span>Record in flow</span><span>It edits</span><span>It captions</span><span>It posts</span><span>She Who Scales</span><span>The Reels Engine</span><span>Record in flow</span><span>It edits</span><span>It captions</span><span>It posts</span><span>She Who Scales</span></div></div>
+    <div class="ribbon b"><div class="track"><span>Any style you love</span><span>Your fonts</span><span>Your colors</span><span>Claude or ChatGPT</span><span>Plug and play</span><span>Any style you love</span><span>Your fonts</span><span>Your colors</span><span>Claude or ChatGPT</span><span>Plug and play</span></div></div>
+  </div>
+</header>
+
+<section class="replaces" aria-labelledby="rep-h">
+  <div class="wrap">
+    <span class="script rv" id="rep-h">one engine replaces</span>
+    <ul class="rep-list" id="repList">
+      <li style="--d:.0s">Your editing app</li>
+      <li style="--d:.15s">The $200 editor</li>
+      <li style="--d:.3s">Caption writing</li>
+      <li style="--d:.45s">Your scheduler</li>
+      <li style="--d:.6s">Sunday night batching</li>
+    </ul>
+    <div class="rep-foot rv"><strong>All for $111. Once.</strong><a class="btn line" href="#pricing"><span>Get the Engine</span><span class="arr"></span></a></div>
+  </div>
+</section>
+
+<section class="on-dark chapter" id="demo" aria-labelledby="demo-h">
+  <div class="wrap">
+    <div class="demo-head rv">
+      <span class="label" style="color:var(--taupe)">See it happen</span>
+      <h2 class="display h2" id="demo-h">One raw clip <span class="script">becomes a reel</span></h2>
+    </div>
+    <div class="demo-grid">
+      <div class="rf rv" id="rf" data-v="raw">
+        <div class="toggle" id="tg" data-v="raw" role="group" aria-label="Compare raw and finished">
+          <i></i>
+          <button type="button" id="tg-raw" data-v="raw" aria-pressed="true">Raw clip</button>
+          <button type="button" id="tg-done" data-v="done" aria-pressed="false">Finished</button>
+        </div>
+        <div class="phone"><div class="screen">
+          <video class="layer raw-l" src="assets/reels/a-raw.mp4" poster="assets/reels/a-raw.jpg" muted loop playsinline autoplay preload="metadata"></video>
+          <video class="layer done-l" src="assets/reels/a-classic.mp4" poster="assets/reels/a-classic.jpg" muted loop playsinline autoplay preload="metadata"></video>
+          <span class="tag raw-l">Raw footage</span><span class="tag done-l">Edited by the engine</span>
+        </div></div>
+        <p class="rf-note">Real footage from my phone. Same clip, tap between raw and finished.</p>
+      </div>
+      <div class="film rv" style="--d:.15s">
+        <div class="cinema" role="img" aria-label="Full demo video, coming soon">
+          <img src="assets/detail.jpg" alt="">
+          <span class="pb"></span>
+          <div class="cap"><span class="script">the full demo</span><small>Raw footage to posted reel, start to finish</small></div>
+        </div>
+        <p class="lede">This is one phone clip, the kind sitting in your camera roll right now. I dropped it in the folder and walked away. No app, no timeline, no menus. Here is everything that happened next.</p>
+        <ol class="chapters">
+          <li><b>00:00</b>Raw clip lands in the folder from my phone</li>
+          <li><b>00:20</b>Dead air and false starts cut out</li>
+          <li><b>00:45</b>Hook, captions and sound, in the style I picked</li>
+          <li><b>01:10</b>Caption written, reel scheduled</li>
+        </ol>
+        <p class="edit-note">Demo note: replace the frame above with your recorded walkthrough and match these four chapter times to it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pain" aria-labelledby="pain-h">
+  <div class="wrap pain-grid">
+    <div class="pain-head rv">
+      <h2 class="display h2" id="pain-h">It was never your ideas. <em>It was the hours.</em></h2>
+      <p class="lede" style="margin-top:24px">Your personal brand is the asset that sells everything else. It only works when you keep showing up.</p>
+    </div>
+    <div class="pain-list">
+      <div class="pain-item rv"><p>You film something great, then it sits in your camera roll <b>for three weeks.</b></p></div>
+      <div class="pain-item rv"><p>One reel takes <b>longer to edit</b> than it took to film, plan and post combined.</p></div>
+      <div class="pain-item rv"><p>You post every day for two weeks, then <b>disappear for a month.</b></p></div>
+      <div class="pain-item rv"><p>You would hire an editor, but <b>$200 a reel</b> is not in the budget yet.<span class="script">sound familiar?</span></p></div>
+    </div>
+  </div>
+</section>
+
+<section class="math" id="math" aria-labelledby="math-h">
+  <div class="wrap">
+    <span class="label" id="math-h">The math</span>
+    <div><span class="big old">$<span data-count="2400">2,400</span></span></div>
+    <p class="m">A month of reels with a freelance editor. Twelve reels at up to $200 each.</p>
+    <span class="script or">or</span>
+    <div><span class="big new">$111</span></div>
+    <p class="m">The Reels Engine. One payment. Every reel after that costs you nothing extra.</p>
+  </div>
+</section>
+
+<section class="steps-sec" id="how" aria-labelledby="how-h">
+  <div class="wrap">
+    <div class="steps-head rv">
+      <h2 class="display h2" id="how-h">You record. It runs.</h2>
+      <p class="lede">Install it once in about 20 minutes. Every reel after that follows four moves, and only the first one needs you.</p>
+    </div>
+    <div class="stack">
+      <article class="card c1" style="--i:0">
+        <div class="txt"><div><h3 class="display verb">Record</h3><span class="script">in a flow state</span></div><p>Talk to the camera like you talk to a friend. No script, no perfect take, no ring light drama.</p></div>
+        <div class="ph"><img src="assets/portrait.jpg" alt="Malika looking into the camera" style="object-position:50% 20%"></div>
+      </article>
+      <article class="card c2" style="--i:1">
+        <div class="txt"><div><h3 class="display verb">Drop</h3><span class="script">it in the folder</span></div><p>Upload raw footage to your engine folder from your laptop or straight from your phone. That is your whole job.</p></div>
+        <div class="ph"><div class="folder"><div class="files">
+          <div class="file">monday-hook.mov <small>Raw</small></div>
+          <div class="file">pricing-story.mov <small>Raw</small></div>
+          <div class="file">client-win.mov <small>Raw</small></div>
+          <div class="file">behind-scenes.mov <small>Raw</small></div>
+        </div></div></div>
+      </article>
+      <article class="card c3" style="--i:2">
+        <div class="txt"><div><h3 class="display verb">Edit</h3><span class="script">in any style</span></div><p>It cuts the dead air, adds your hook, captions, zooms, sound and cover. Styled like any reel you love, in your fonts and colors.</p></div>
+        <div class="ph"><img src="assets/hero.jpg" alt="Malika seated in a black blazer" style="object-position:50% 25%"></div>
+      </article>
+      <article class="card c4" style="--i:3">
+        <div class="txt"><div><h3 class="display verb">Post</h3><span class="script">while you live</span></div><p>It writes the caption, schedules the week and posts for you. Review first if you like, or let it run.</p></div>
+        <div class="ph"><div class="sched"><div class="week">
+          <div class="day"><small>Mon</small><i style="background-image:url(assets/portrait.jpg)"></i></div>
+          <div class="day"><small>Tue</small><i style="background-image:url(assets/cta.jpg)"></i></div>
+          <div class="day"><small>Wed</small><i style="background-image:url(assets/hero.jpg)"></i></div>
+          <div class="day"><small>Thu</small><i style="background-image:url(assets/detail.jpg)"></i></div>
+          <div class="day"><small>Fri</small><i style="background-image:url(assets/portrait.jpg);background-position:50% 60%"></i></div>
+          <div class="day"><small>Sat</small><i style="background-image:url(assets/cta.jpg);background-position:50% 70%"></i></div>
+          <div class="day"><small>Sun</small><i style="background-image:url(assets/hero.jpg);background-position:50% 70%"></i></div>
+        </div></div></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="styles" id="styles" aria-labelledby="styles-h">
+  <div class="wrap">
+    <div class="styles-top rv">
+      <div>
+        <span class="label" style="color:var(--wine)">The difference</span>
+        <h2 class="display h2" id="styles-h" style="margin-top:18px">One raw clip. <span class="script">any style you want</span></h2>
+      </div>
+      <div>
+        <p class="lede">These are real reels from my archive. Each row is one raw video, edited by the engine in three different styles. Paste any reel you love and it learns that style too.</p>
+        <div class="paste" aria-hidden="true"><span>Match this</span><output id="pasteOut"></output></div>
+      </div>
+    </div>
+    <div class="gtabs rv" role="tablist" aria-label="Choose a raw clip">
+      <button type="button" role="tab" id="tab-1" aria-controls="set-1" aria-selected="true">Clip one<small>Posting once a day</small></button>
+      <button type="button" role="tab" id="tab-2" aria-controls="set-2" aria-selected="false">Clip two<small>When life gets hard</small></button>
+    </div>
+    <div class="gallery rv">
+      <div class="gset" id="set-1" role="tabpanel" aria-labelledby="tab-1">
+        <figure class="g-item g-raw">
+          <div class="phone v"><div class="screen"><video class="" src="assets/reels/a-raw.mp4" poster="assets/reels/a-raw.jpg" muted loop playsinline autoplay preload="metadata"></video></div></div>
+          <figcaption><b>Raw footage</b><span>Straight from my phone. Nothing done to it.</span></figcaption>
+        </figure>
+        <span class="becomes script" aria-hidden="true">becomes</span>
+        <figure class="g-item">
+          <div class="phone v"><div class="screen"><video class="" src="assets/reels/a-classic.mp4" poster="assets/reels/a-classic.jpg" muted loop playsinline autoplay preload="metadata"></video></div></div>
+          <figcaption><b>Classic Captions</b><span>Bold spoken word, hook up top, data inserts.</span></figcaption>
+        </figure><figure class="g-item">
+          <div class="phone v"><div class="screen"><video class="" src="assets/reels/a-editorial.mp4" poster="assets/reels/a-editorial.jpg" muted loop playsinline autoplay preload="metadata"></video></div></div>
+          <figcaption><b>Editorial</b><span>Magazine feel. Small words, big statements, script cards.</span></figcaption>
+        </figure><figure class="g-item">
+          <div class="phone v"><div class="screen"><video class="" src="assets/reels/a-cards.mp4" poster="assets/reels/a-cards.jpg" muted loop playsinline autoplay preload="metadata"></video></div></div>
+          <figcaption><b>Headline &amp; Cards</b><span>Serif headline, phrase captions, list cards.</span></figcaption>
+        </figure>
+      </div>
+      <div class="gset" id="set-2" role="tabpanel" aria-labelledby="tab-2" hidden>
+        <figure class="g-item g-raw">
+          <div class="phone v"><div class="screen"><video class="" src="assets/reels/b-raw.mp4" poster="assets/reels/b-raw.jpg" muted loop playsinline autoplay preload="metadata"></video></div></div>
+          <figcaption><b>Raw footage</b><span>Straight from my phone. Nothing done to it.</span></figcaption>
+        </figure>
+        <span class="becomes script" aria-hidden="true">becomes</span>
+        <figure class="g-item">
+          <div class="phone v"><div class="screen"><video class="" src="assets/reels/b-podcast.mp4" poster="assets/reels/b-podcast.jpg" muted loop playsinline autoplay preload="metadata"></video></div></div>
+          <figcaption><b>Podcast</b><span>Still frame, a hook box, one word at a time.</span></figcaption>
+        </figure><figure class="g-item">
+          <div class="phone v"><div class="screen"><video class="" src="assets/reels/b-notecard.mp4" poster="assets/reels/b-notecard.jpg" muted loop playsinline autoplay preload="metadata"></video></div></div>
+          <figcaption><b>Notecard</b><span>Script keywords, signature, typed paper notecards.</span></figcaption>
+        </figure><figure class="g-item">
+          <div class="phone v"><div class="screen"><video class="" src="assets/reels/b-cards.mp4" poster="assets/reels/b-cards.jpg" muted loop playsinline autoplay preload="metadata"></video></div></div>
+          <figcaption><b>Headline &amp; Cards</b><span>Big statements and list cards that teach.</span></figcaption>
+        </figure>
+      </div>
+    </div>
+    <p class="g-note rv">All clips are muted here. Every edit was made from the raw clip on the left.</p>
+  </div>
+</section>
+
+<section class="talk" aria-labelledby="talk-h">
+  <div class="wrap talk-grid">
+    <div class="rv">
+      <h2 class="display h2" id="talk-h">No menus. No timeline. <em>Just say it.</em></h2>
+      <p class="lede" style="margin-top:24px">You talk to it in plain words, the way you would text your assistant. It does the rest.</p>
+      <div class="works">
+        <span class="label">Works with the AI you already use</span>
+        <div class="ai"><span><img src="assets/claude.svg" alt="">Claude</span><span><img src="assets/openai.svg" alt="">ChatGPT</span></div>
+      </div>
+      <div class="needs">
+        <div><b>20 minutes</b><small>One guided install. Everything is pre-built.</small></div>
+        <div><b>Your AI plan</b><small>A paid Claude or ChatGPT account.</small></div>
+        <div><b>Your phone</b><small>Film and upload from anywhere.</small></div>
+      </div>
+    </div>
+    <div class="chat rv" id="chat" style="--d:.15s" aria-label="Example conversation with the engine">
+      <div class="chat-top"><span>Reels Engine</span><b>Online</b></div>
+      <div class="msg me">Edit everything in my folder like the reel I just sent. My fonts, burgundy captions.</div>
+      <div class="msg bot"><small>Engine</small>Found 7 clips. Cutting dead air, adding hooks and captions in that style now.</div>
+      <div class="msg bot"><small>Engine</small>Done. 7 reels edited, captions written, scheduled Monday to Sunday at 7pm.</div>
+      <div class="msg me">Make Thursday's feel calmer.</div>
+      <div class="msg bot"><small>Engine</small>Updated. Slower cuts, softer music, same hook.</div>
+      <div class="typing" aria-hidden="true"><i></i><i></i><i></i></div>
+    </div>
+  </div>
+</section>
+
+<section class="inside" aria-labelledby="in-h">
+  <div class="wrap">
+    <div class="inside-head rv"><h2 class="display h2" id="in-h">And it also does <span class="script">all of this</span></h2></div>
+    <div class="bento">
+      <div class="cell img rv"><img src="assets/detail.jpg" alt="Malika seated on a white plinth"><div class="in-t"><h3>It remembers you</h3><p>It learns your style, so every reel needs fewer tweaks than the last.</p></div></div>
+      <div class="cell wide wine rv" style="--d:.08s"><div class="caps-demo" aria-hidden="true"><span>one word</span><span>karaoke</span><span>Full screen</span></div><h3>Captions, three ways</h3><p>Single word, karaoke, or a full-screen statement.</p></div>
+      <div class="cell rv" style="--d:.16s"><h3>Cuts the dead air</h3><p>The ums, false starts and silence, gone. Your best take stays.</p></div>
+      <div class="cell rv" style="--d:.08s"><h3>Picks your cover</h3><p>It pulls your best frame for the thumbnail.</p></div>
+      <div class="cell ink rv" style="--d:.16s"><span class="script">batch</span><h3>A week at once</h3><p>Drop a folder, get seven reels back, queued.</p></div>
+      <div class="cell rv" style="--d:.24s"><h3>Your original stays safe</h3><p>Raw footage is never touched or overwritten.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="proof" aria-labelledby="proof-h">
+  <div class="wrap">
+    <div class="proof-head rv">
+      <h2 class="display h2" id="proof-h">In their <span class="script">own words</span></h2>
+      <span class="rail-hint">Swipe to read more</span>
+    </div>
+    <div class="rail rv" tabindex="0" aria-label="Testimonials">
+      <article class="dm"><div class="who"><span class="av"></span><div><b>Beta user name</b><small>Coach, Instagram</small></div></div><p class="bub">Placeholder. Paste a real DM from a beta user here, word for word.</p></article>
+      <article class="dm"><div class="who"><span class="av"></span><div><b>Beta user name</b><small>Founder, service business</small></div></div><p class="bub">Placeholder. Before and after works best: how long editing took, how long it takes now.</p></article>
+      <article class="dm"><div class="who"><span class="av"></span><div><b>Beta user name</b><small>Content creator</small></div></div><p class="bub">Placeholder. A result with a number: posts per week, views, or hours saved.</p></article>
+      <article class="dm"><div class="who"><span class="av"></span><div><b>Beta user name</b><small>Course creator</small></div></div><p class="bub">Placeholder. Something about how easy the setup was.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="on-dark founder" aria-labelledby="f-h">
+  <div class="wrap f-grid">
+    <div class="f-arch rv"><img src="assets/hero.jpg" alt="Malika, founder of She Who Scales"></div>
+    <div class="f-copy rv" style="--d:.12s">
+      <span class="label" style="color:var(--taupe)">Why trust me</span>
+      <h2 class="display h2" id="f-h">I built it for <em>myself first.</em></h2>
+      <p>I'm Malika. I help women build and scale businesses through She Who Scales. For a long time, the hardest part of my own business was my personal brand.</p>
+      <p class="pull">Not the ideas. Not the camera. The consistency.</p>
+      <p>I would film, then the clips sat there because editing took hours I did not have. So I built the engine that does it for me. This is the real system I use every week. Now it is yours.</p>
+      <span class="script sig">Malika</span>
+    </div>
+  </div>
+</section>
+
+<section class="pricing" id="pricing" aria-labelledby="p-h">
+  <div class="wrap p-wrap">
+    <div class="rv">
+      <h2 class="display h2" id="p-h">Set it up once. <span class="script">keep it forever</span></h2>
+      <p class="lede" style="margin-top:26px">One payment. No subscription to me. Every update is included, so the engine keeps getting better while you keep posting.</p>
+    </div>
+    <div class="ticket rv" style="--d:.12s">
+      <span class="label">The Reels Engine</span>
+      <div class="price"><sup>$</sup>111</div>
+      <span class="once">One time, lifetime access</span>
+      <ul class="incl">
+        <li>The full engine, pre-built, plug and play</li>
+        <li>Guided 20-minute install</li>
+        <li>Style matching from any reel you love</li>
+        <li>Your fonts, colors and brand look</li>
+        <li>Captions, scheduling and auto-posting</li>
+        <li>Works with Claude or ChatGPT</li>
+        <li>Every future update</li>
+      </ul>
+      <a class="btn light" href="#"><span>Get the Engine</span><span class="arr"></span></a>
+      <small class="fine">Instant access after checkout.</small>
+    </div>
+  </div>
+</section>
+
+<section class="faq-sec" id="faq" aria-labelledby="faq-h">
+  <div class="wrap faq-grid">
+    <h2 class="display h2" id="faq-h">Still deciding? <span class="script">here's the honest answer</span></h2>
+    <div class="qas">
+      <div class="qa"><button type="button" id="q1" aria-expanded="true">I'm not techy. Can I really set this up?<i></i></button><div class="a"><div><p>Yes. Everything is pre-built. You follow the guided install once, in about 20 minutes. After that you talk to it in plain words. If you can send a text, you can run this.</p></div></div></div>
+      <div class="qa"><button type="button" id="q2" aria-expanded="false">Will it look like me, or like everyone else?<i></i></button><div class="a"><div><p>Like you. It works from your own footage, and you choose the style: match any reel you love, then set your fonts and colors. It also learns your preferences over time.</p></div></div></div>
+      <div class="qa"><button type="button" id="q3" aria-expanded="false">Do I need CapCut or any editing app?<i></i></button><div class="a"><div><p>No. The engine does the editing and hands you a finished reel. There is no editing app to open.</p></div></div></div>
+      <div class="qa"><button type="button" id="q4" aria-expanded="false">Does it work with ChatGPT or only Claude?<i></i></button><div class="a"><div><p>Both. Use whichever assistant you already have a paid plan with.</p></div></div></div>
+      <div class="qa"><button type="button" id="q5" aria-expanded="false">Does it really post for me?<i></i></button><div class="a"><div><p>Yes. It writes the caption, schedules the reel and posts it. You can also review each reel before it goes live.</p></div></div></div>
+      <div class="qa"><button type="button" id="q6" aria-expanded="false">How many reels can I make?<i></i></button><div class="a"><div><p>There is no cap from me. Your volume depends on your AI plan's usage. Drop in a whole folder and get a week of content back in one go.</p></div></div></div>
+      <div class="qa"><button type="button" id="q7" aria-expanded="false">What if I get stuck?<i></i></button><div class="a"><div><p>Placeholder for your support and refund policy. Write your exact terms here before launch.</p></div></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="on-dark final" aria-labelledby="fin-h">
+  <div class="wrap">
+    <span class="script rv">your feed, handled</span>
+    <h2 class="display h2 rv" id="fin-h">Record in flow. Let it run.</h2>
+    <p class="lede rv" style="margin-top:22px">Show up as the face of your brand without losing your week to editing.</p>
+    <div class="rv"><a class="btn light" href="#pricing"><span>Get the Engine</span><span class="arr"></span></a></div>
+  </div>
+  <div class="wordmark" aria-hidden="true">She Who Scales</div>
+</section>
+<footer><div class="wrap"><span>&copy; 2026 She Who Scales</span><span>Privacy &nbsp; Terms</span></div></footer>
+
+<div class="buybar" id="buybar"><div><small>The Reels Engine</small><b>$111</b></div><a class="btn light" href="#pricing"><span>Get the Engine</span></a></div>
+
+<script>
+(function(){
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var $=function(s,r){return (r||document).querySelector(s)},$$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+  setTimeout(function(){var c=$('.curtain');if(c)c.remove()},2300);
+
+  // scroll reveals
+  var targets=$$('.rv').concat([$('#repList'),$('#math'),$('#chat')],$$('.card'));
+  if('IntersectionObserver' in window&&!reduce){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');if(e.target.id==='math')count();if(e.target.id==='chat')chat();io.unobserve(e.target)}})},{threshold:.18,rootMargin:'0px 0px -6% 0px'});
+    targets.forEach(function(t){t&&io.observe(t)});
+  }else{targets.forEach(function(t){t&&t.classList.add('in')});$$('.msg').forEach(function(m){m.classList.add('show')})}
+
+  // raw vs finished
+  var tg=$('#tg'),rf=$('#rf');
+  $$('button',tg).forEach(function(b){b.addEventListener('click',function(){var v=b.dataset.v;tg.dataset.v=v;rf.dataset.v=v;$$('button',tg).forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')})})});
+  if(!reduce){var auto=setInterval(function(){if(!document.hidden){var n=tg.dataset.v==='raw'?'done':'raw';$('[data-v="'+n+'"]',tg).click()}},3800);tg.addEventListener('pointerdown',function(){clearInterval(auto)},{once:true})}
+
+  // gallery tabs
+  $$('.gtabs button').forEach(function(b){b.addEventListener('click',function(){
+    $$('.gtabs button').forEach(function(x){var on=x===b;x.setAttribute('aria-selected',on?'true':'false');var p=document.getElementById(x.getAttribute('aria-controls'));p.hidden=!on;if(on){p.classList.remove('enter');void p.offsetWidth;p.classList.add('enter');$$('video',p).forEach(function(v){v.currentTime=0;var r=v.play();r&&r.catch(function(){})})}});
+  })});
+
+  // play videos only while on screen (always muted)
+  var vids=$$('video');
+  vids.forEach(function(v){v.muted=true;v.defaultMuted=true});
+  if('IntersectionObserver' in window){
+    var vio=new IntersectionObserver(function(es){es.forEach(function(e){var v=e.target;if(e.isIntersecting&&!reduce){var r=v.play();r&&r.catch(function(){})}else v.pause()})},{threshold:.25});
+    vids.forEach(function(v){vio.observe(v)});
+  }
+  if(reduce)vids.forEach(function(v){v.removeAttribute('autoplay');v.pause()});
+
+  // paste-a-reel typing
+  var urls=['instagram.com/reel/a-quiet-luxury-edit','tiktok.com/@founder/video/talking-head','instagram.com/reel/your-favourite-creator'],ui=0,po=$('#pasteOut');
+  function typeUrl(){var u=urls[ui++%urls.length],i=0;if(reduce){po.textContent=u;return}
+    var t=setInterval(function(){po.textContent=u.slice(0,++i);if(i>=u.length){clearInterval(t);setTimeout(typeUrl,2600)}},45)}
+  typeUrl();
+
+  // money counter
+  var counted=false;
+  function count(){if(counted)return;counted=true;var el=$('[data-count]'),to=+el.dataset.count,t0=null;
+    function f(ts){if(!t0)t0=ts;var p=Math.min((ts-t0)/1300,1),e=1-Math.pow(1-p,4);el.textContent=Math.round(to*e).toLocaleString('en-US');if(p<1)requestAnimationFrame(f)}requestAnimationFrame(f)}
+
+  // chat sequence
+  var chatted=false;
+  function chat(){if(chatted)return;chatted=true;var ms=$$('.msg'),ty=$('.typing'),i=0;
+    (function next(){if(i>=ms.length){ty.classList.remove('show');return}
+      var m=ms[i];
+      if(m.classList.contains('bot')){ty.classList.add('show');m.parentNode.insertBefore(ty,m);setTimeout(function(){ty.classList.remove('show');m.classList.add('show');i++;setTimeout(next,700)},1100)}
+      else{m.classList.add('show');i++;setTimeout(next,800)}})();
+  }
+
+  // faq
+  $$('.qa button').forEach(function(b){b.addEventListener('click',function(){b.setAttribute('aria-expanded',b.getAttribute('aria-expanded')==='true'?'false':'true')})});
+
+  // mobile buy bar
+  var bb=$('#buybar'),hero=$('#top'),pr=$('#pricing'),heroOut=false,prIn=false;
+  function upd(){bb.classList.toggle('show',heroOut&&!prIn)}
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(e){heroOut=!e[0].isIntersecting;upd()}).observe(hero);
+    new IntersectionObserver(function(e){prIn=e[0].isIntersecting;upd()}).observe(pr);
+  }
+
+  // magnetic primary buttons (fine pointers only)
+  if(!reduce&&window.matchMedia('(pointer:fine)').matches){
+    $$('.btn').forEach(function(b){
+      b.addEventListener('pointermove',function(e){var r=b.getBoundingClientRect();b.style.transform='translate('+((e.clientX-r.left-r.width/2)*.12)+'px,'+((e.clientY-r.top-r.height/2)*.2)+'px)'});
+      b.addEventListener('pointerleave',function(){b.style.transform=''});
+    });
+  }
+})();
+</script>
+
+</body></html>
